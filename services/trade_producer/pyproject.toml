@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 quixstreams = "^2.8.1"
+websocket-client = "^1.8.0"
 
 
 [build-system]

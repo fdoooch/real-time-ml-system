@@ -1,3 +1,5 @@
+from src.kraken_api import KrakenWebsocketTradeAPI
+
 from quixstreams import Application
 import time
 
@@ -16,17 +18,20 @@ def produce_trades(
     app = Application(kafka_broker_address)
 
     topic = app.topic(kafka_topic, value_serializer='json')
-    event = {"id": "1", "price": 1.0, "size": 1.0, "side": "buy"}
+    symbol = "BTCUSDT"
+    kraken_api = KrakenWebsocketTradeAPI(symbol)
 
     with app.get_producer() as producer:
         while True:
-            message = topic.serialize(key=event["id"], value=event)
+            trades = kraken_api.get_trades()
+            for trade in trades:
+                message = topic.serialize(key=trade["symbol"], value=trade)
 
-            producer.produce(
-                topic=topic.name, value=message.value, key=message.key
-            )
-            print(f"Produced message: {message}")
-            time.sleep(1)
+                producer.produce(
+                    topic=topic.name, value=message.value, key=message.key
+                )
+                print(f"Produced message: {message}")
+                time.sleep(1)
 
 
 
