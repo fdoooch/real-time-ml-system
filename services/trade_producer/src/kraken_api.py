@@ -1,7 +1,12 @@
+from src.config import settings
+
 from typing import Dict
 from websocket import create_connection, WebSocket
 import json
 import datetime
+import logging
+
+logger = logging.getLogger(settings.LOGGER_NAME)
 
 
 def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
@@ -39,12 +44,12 @@ class KrakenWebsocketTradeAPI:
         # wait for subscription confirmation
         for i in range(5):
             msg = ws.recv()
-            print(f"Received message: {msg}")
+            logger.debug(f"Received message: {msg}")
             msg_json = json.loads(msg)
             if msg_json.get("method") == "subscribe" and msg_json.get("success"):
-                print("Connected to websocket")
+                logger.info("Connected to websocket")
                 return ws
-        print("Could not connect to websocket")
+        logger.error("Could not connect to websocket")
         return None
         
 

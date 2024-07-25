@@ -35,7 +35,7 @@ def produce_trades(
                 producer.produce(
                     topic=topic.name, value=message.value, key=message.key
                 )
-                print(f"Produced message: {message}")
+                logger.debug(f"Produced message: {message}")
                 time.sleep(1)
 
 
