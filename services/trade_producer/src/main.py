@@ -1,7 +1,11 @@
 from src.kraken_api import KrakenWebsocketTradeAPI
+from src.config import settings
 
 from quixstreams import Application
 import time
+import logging
+
+logger = logging.getLogger(settings.LOGGER_NAME)
 
 
 def produce_trades(
@@ -15,6 +19,7 @@ def produce_trades(
         kafka_broker_address: The address of the Kafka broker
         kafka_topic: The name of the Kafka topic
     """
+    logger.debug(f"KAFKA BROKER ADDRESS: {kafka_broker_address}")
     app = Application(kafka_broker_address)
 
     topic = app.topic(kafka_topic, value_serializer='json')
@@ -36,7 +41,9 @@ def produce_trades(
 
 
 if __name__ == "__main__":
+    # print(f"Base directory: {settings.BASE_DIR}")
+    
     produce_trades(
-        kafka_broker_address="redpanda-0:9092",
-        kafka_topic="trade"
+        kafka_broker_address=settings.kafka.BROKER_ADDRESS,
+        kafka_topic=settings.kafka.TRADES_TOPIC
     )
