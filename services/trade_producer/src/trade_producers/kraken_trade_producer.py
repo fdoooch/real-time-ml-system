@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Dict
 
-from websocket import WebSocket, create_connection
+from websockets.sync.client import ClientConnection, connect
 
 from src.abstract.trade_producer import TradeProducer
 from src.config import config
@@ -22,7 +22,7 @@ class KrakenTradeProducer(TradeProducer):
 	URL = "wss://ws.kraken.com/v2"
 
 	def __init__(self):
-		self._ws = None
+		self._ws: ClientConnection = None
 		# self._ws = self._subscribe_to_trades()
 
 	def subscribe_to_trades(self, symbols: list[str]) -> None:
@@ -30,7 +30,7 @@ class KrakenTradeProducer(TradeProducer):
 		Establishes a connection to the Kraken websocket API
 		"""
 		symbols = [f"{symbol.split('USDT')[0]}/USDT" for symbol in symbols]
-		self._ws = create_connection(self.URL)
+		self._ws = connect(self.URL)
 		# subscribe to trades
 		msg = {
 			"method": "subscribe",

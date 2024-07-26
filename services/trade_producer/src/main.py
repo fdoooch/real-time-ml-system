@@ -4,6 +4,7 @@ import time
 from quixstreams import Application
 
 from src.config import config
+from src.trade_producers.binance_trade_producer import BinanceTradeProducer
 from src.trade_producers.kraken_trade_producer import KrakenTradeProducer
 
 logger = logging.getLogger(config.LOGGER_NAME)
@@ -25,6 +26,7 @@ def produce_trades(
 
 	topic = app.topic(kafka_topic, value_serializer="json")
 	trades_source = KrakenTradeProducer()
+	# trades_source = BinanceTradeProducer()
 	trades_source.subscribe_to_trades(symbols)
 
 	with app.get_producer() as producer:
