@@ -5,6 +5,7 @@ from typing import Dict
 
 from websocket import WebSocket, create_connection
 
+from src.abstract.trade_producer import TradeProducer
 from src.config import config
 
 logger = logging.getLogger(config.LOGGER_NAME)
@@ -17,57 +18,40 @@ def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
 	return timestamp_ms
 
 
-class KrakenWebsocketTradeAPI:
+class KrakenTradeProducer(TradeProducer):
 	URL = "wss://ws.kraken.com/v2"
 
-	def __init__(self, symbol: str):
-		self.symbol = f"{symbol.split('USDT')[0]}/USDT"
-		self._ws = self._subscribe_to_trades()
+	def __init__(self):
+		self._ws = None
+		# self._ws = self._subscribe_to_trades()
 
-	def _subscribe_to_trades(self) -> WebSocket:
+	def subscribe_to_trades(self, symbols: list[str]) -> None:
 		"""
 		Establishes a connection to the Kraken websocket API
 		"""
-		ws = create_connection(self.URL)
+		symbols = [f"{symbol.split('USDT')[0]}/USDT" for symbol in symbols]
+		self._ws = create_connection(self.URL)
 		# subscribe to trades
 		msg = {
 			"method": "subscribe",
 			"params": {
 				"channel": "trade",
-				"symbol": [
-					self.symbol,
-				],
+				"symbol": symbols,
 				"snapshot": False,
 			},
 		}
-		ws.send(json.dumps(msg))
+		self._ws.send(json.dumps(msg))
 
 		# wait for subscription confirmation
-		for i in range(5):
-			msg = ws.recv()
+		for i in range(len(symbols) + 1):
+			msg = self._ws.recv()
 			logger.debug(f"Received message: {msg}")
 			msg_json = json.loads(msg)
 			if msg_json.get("method") == "subscribe" and msg_json.get("success"):
-				logger.info("Connected to websocket")
-				return ws
-		logger.error("Could not connect to websocket")
+				logger.info(f"Subscribed to {msg_json.get('result').get('symbol')}")
 		return None
 
 	def get_trades(self) -> list[Dict]:
-		# mock_trades = [
-		#     {
-		#         "symbol": "BTCUSDT",
-		#         "price": 60000,
-		#         "volume": 0.01,ex
-		#         "time": 1663975000000
-		#     },
-		#     {
-		#         "symbol": "BTCUSDT",
-		#         "price": 59000,
-		#         "volume": 0.02,
-		#         "time": 1663976000000
-		#     }
-		# ]
 		msg = self._ws.recv()
 		print(f"Received message: {msg}")
 		if '"heartbeat"' in msg:
