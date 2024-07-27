@@ -1,5 +1,5 @@
 __all__ = [
-	"TradeProducer",
+	"TradesConnector",
 ]
 
-from src.abstract.trade_producer import TradeProducer
+from src.abstract.trades_connector import TradesConnector
