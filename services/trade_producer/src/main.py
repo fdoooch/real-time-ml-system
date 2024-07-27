@@ -8,8 +8,7 @@ from quixstreams import Application
 from src.abstract.trades_connector import TradesConnector
 from src.config import config
 from src.trade_producers.bybit_spot_trades_connector import BybitSpotTradesConnector
-
-# from src.trade_producers.kraken_trade_connector import KrakenTradeConnector
+from src.trade_producers.kraken_trades_connector import KrakenTradesConnector
 
 logger = logging.getLogger(config.LOGGER_NAME)
 
@@ -34,9 +33,10 @@ class TradesProducer:
 
 
 if __name__ == "__main__":
-	trades_connector: TradesConnector = BybitSpotTradesConnector()
+	# trades_connector: TradesConnector = BybitSpotTradesConnector()
+	trades_connector: TradesConnector = KrakenTradesConnector()
 	producer = TradesProducer(config.kafka.BROKER_ADDRESS, config.kafka.TRADES_TOPIC)
-	producer.subscribe_to_trades(["BTCUSDT"], trades_connector)
+	producer.subscribe_to_trades(["BTCUSDT", "ETHUSDT"], trades_connector)
 	try:
 		while True:
 			...
