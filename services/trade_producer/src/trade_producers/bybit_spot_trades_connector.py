@@ -55,27 +55,3 @@ class BybitSpotTradesConnector(TradesConnector):
 			}
 			trades.append(trade)
 		self.callback_handler(trades)
-		
-
-	# def get_trades(self) -> list[Dict]:
-	# 	msg = self._ws.recv()
-	# 	print(f"Received message: {msg}")
-	# 	if '"heartbeat"' in msg:
-	# 		return []
-	# 	msg_json = json.loads(msg)
-	# 	if msg_json.get("channel") == "trade":
-	# 		trades = []
-	# 		for trade in msg_json.get("data"):
-	# 			trades.append(
-	# 				{
-	# 					"symbol": trade.get("symbol"),
-	# 					"price": trade.get("price"),
-	# 					"qty": trade.get("qty"),
-	# 					"timestamp": convert_datetime_to_timestamp_in_ms(
-	# 						trade.get("timestamp")
-	# 					),
-	# 				}
-	# 			)
-	# 		return trades
-	# 	print("Unknown websocket message format")
-	# 	return msg
