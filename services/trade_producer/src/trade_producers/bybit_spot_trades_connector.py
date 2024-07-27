@@ -18,12 +18,10 @@ def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
 
 
 class BybitSpotTradesConnector(TradesConnector):
-	URL = "wss://fstream.binance.com"
-	# wss://fstream.binance.com/stream?streams=bnbusdt@aggTrade/btcusdt@markPrice
 
 	def __init__(self):
-		self._ws = None
-		# self._ws = self._subscribe_to_trades()
+		self._ws: WebSocket = None
+
 
 	def subscribe_to_trades(self, symbols: list[str], callback_handler: Callable) -> None:
 		"""
@@ -35,7 +33,7 @@ class BybitSpotTradesConnector(TradesConnector):
 		)
 		# subscribe to trades
 		self._ws.trade_stream(
-			symbol=symbols[0],
+			symbol=symbols,
 			callback=self._callback_handler,
 		)
 		self.callback_handler = callback_handler
