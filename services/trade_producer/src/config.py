@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 	LOGGER_NAME: str = "trade_producer"
 
 
-config = Settings()
+settings = Settings()
 
 logging.basicConfig(
 	level=logging.WARNING,
@@ -37,7 +37,7 @@ fmt = logging.Formatter(
 	fmt="%(asctime)s %(levelname).3s | %(name)s -> %(funcName)s | %(message)s",
 	datefmt="%Y-%m-%d %H:%M:%S",
 )
-logger = logging.getLogger(config.LOGGER_NAME)
+logger = logging.getLogger(settings.LOGGER_NAME)
 for handler in logger.handlers:
 	handler.setFormatter(fmt)
 logger.setLevel(logging.DEBUG)

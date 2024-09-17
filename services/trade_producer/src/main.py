@@ -5,12 +5,12 @@ from typing import Dict
 
 from quixstreams import Application
 
-from src.abstract.trades_connector import TradesConnector
-from src.config import config
-from src.trade_producers.bybit_spot_trades_connector import BybitSpotTradesConnector
-from src.trade_producers.kraken_trades_connector import KrakenTradesConnector
+from .abstract.trades_connector import TradesConnector
+from .config import settings
+from .trade_producers.bybit_spot_trades_connector import BybitSpotTradesConnector
+from .trade_producers.kraken_trades_connector import KrakenTradesConnector
 
-logger = structlog.getLogger(config.LOGGER_NAME)
+logger = structlog.getLogger(settings.LOGGER_NAME)
 
 
 class TradesProducer:
@@ -37,7 +37,7 @@ class TradesProducer:
 if __name__ == "__main__":
 	# trades_connector: TradesConnector = BybitSpotTradesConnector()
 	trades_connector: TradesConnector = KrakenTradesConnector()
-	producer = TradesProducer(config.kafka.BROKER_ADDRESS, config.kafka.TRADES_TOPIC)
+	producer = TradesProducer(settings.kafka.BROKER_ADDRESS, settings.kafka.TRADES_TOPIC)
 	producer.subscribe_to_trades(["BTCUSDT", "ETHUSDT"], trades_connector)
 	try:
 		while True:

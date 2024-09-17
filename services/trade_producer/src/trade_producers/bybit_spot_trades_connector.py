@@ -5,9 +5,9 @@ from typing import Callable, Dict
 from pybit.unified_trading import WebSocket
 
 from src.abstract import TradesConnector
-from src.config import config
+from src.config import settings
 
-logger = logging.getLogger(config.LOGGER_NAME)
+logger = logging.getLogger(settings.LOGGER_NAME)
 
 
 def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
