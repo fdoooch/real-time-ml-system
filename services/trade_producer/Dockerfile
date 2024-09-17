@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY pyproject.toml poetry.lock /app/
 
-RUN poetry install --no-dev
+RUN poetry install --only main
 
 COPY . /app
 
