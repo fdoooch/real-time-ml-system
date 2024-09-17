@@ -1,4 +1,4 @@
-import logging
+import structlog
 
 # import time
 from typing import Dict
@@ -10,11 +10,13 @@ from src.config import config
 from src.trade_producers.bybit_spot_trades_connector import BybitSpotTradesConnector
 from src.trade_producers.kraken_trades_connector import KrakenTradesConnector
 
-logger = logging.getLogger(config.LOGGER_NAME)
+logger = structlog.getLogger(config.LOGGER_NAME)
 
 
 class TradesProducer:
 	def __init__(self, kafka_broker_address: str, kafka_topic: str) -> None:
+		logger.info("Initializing trades producer")
+		logger.debug(kafka_broker_address)
 		self.kafka_broker_address = kafka_broker_address
 		self.kafka = Application(self.kafka_broker_address)
 		self.topic = self.kafka.topic(kafka_topic, value_serializer="json")

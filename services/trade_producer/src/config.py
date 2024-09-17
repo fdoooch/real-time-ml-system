@@ -7,8 +7,9 @@ from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DOTENV_PATH = os.path.join(BASE_DIR, ".env")
+DOTENV_PATH = os.path.join(BASE_DIR, ".env.trade_producer")
 load_dotenv(f"{DOTENV_PATH}")
+print(f"Loading .env from {DOTENV_PATH}")
 
 
 class KafkaSettings(BaseModel):

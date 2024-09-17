@@ -11,6 +11,7 @@ quixstreams = "^2.8.1"
 pydantic-settings = "^2.3.4"
 websockets = "^12.0"
 pybit = "^5.8.0"
+structlog = "^24.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
