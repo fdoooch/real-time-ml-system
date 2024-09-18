@@ -40,16 +40,15 @@ class TradesProducer:
         
 
 def get_trades_connector() -> TradesConnector:
-    if settings.TRADES_SOURCE == TradeSourceName.KRAKEN:
+	if settings.TRADES_SOURCE == TradeSourceName.KRAKEN:
 		return KrakenTradesConnector()
-    elif settings.TRADES_SOURCE == TradeSourceName.BYBIT_SPOT:
+	elif settings.TRADES_SOURCE == TradeSourceName.BYBIT_SPOT:
 		return BybitSpotTradesConnector()
-	else:
-		raise NotImplementedError
+	raise NotImplementedError
 
 
 if __name__ == "__main__":    
-    trades_connector: get_trades_connector()
+    trades_connector = get_trades_connector()
     producer = TradesProducer(
         settings.kafka.BROKER_ADDRESS, settings.kafka.TRADES_TOPIC
     )
