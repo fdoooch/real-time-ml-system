@@ -29,7 +29,7 @@ def trade_to_ohlcv(
     app = Application(
         broker_address=kafka_broker_address,
         consumer_group=settings.kafka.GROUP_ID, #In case we have multiple parallel trade-to-ohlcv jobs
-
+        auto_offset_reset=settings.kafka.AUTO_OFFSET_RESET
     )
     input_topic = app.topic(kafka_input_topic, value_serializer='json')
 
