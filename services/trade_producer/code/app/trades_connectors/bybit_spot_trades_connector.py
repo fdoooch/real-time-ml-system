@@ -22,10 +22,9 @@ class BybitSpotTradesConnector(TradesConnector):
 	def __init__(self):
 		self._ws: WebSocket = None
 
-
 	def subscribe_to_trades(self, symbols: list[str], callback_handler: Callable) -> None:
 		"""
-		Establishes a connection to the Kraken websocket API
+		Establishes a connection to the Bybit websocket API
 		"""
 		self._ws = WebSocket(
 			testnet=False,
