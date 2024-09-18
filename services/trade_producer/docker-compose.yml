@@ -1,9 +1,9 @@
 services:
-  trade-producer:
+  trades-producer:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: trade-producer
+    container_name: trades-producer
     restart: unless-stopped
     tty: true
     volumes:
@@ -11,7 +11,7 @@ services:
     networks:
       - redpanda_network
     env_file:
-      - .env.trade_producer
+      - .env.trades_producer
     logging:
       options:
         max-size: "10m"
