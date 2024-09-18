@@ -49,6 +49,7 @@ def trade_to_ohlcv(
 
 
 if __name__ == "__main__":
+    logger.info("Starting trade_to_ohlcv")
     trade_to_ohlcv(
         kafka_input_topic=settings.kafka.TRADES_TOPIC,
         kafka_output_topic=settings.kafka.OHLCV_TOPIC,
