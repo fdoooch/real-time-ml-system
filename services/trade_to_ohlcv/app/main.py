@@ -1,10 +1,12 @@
 from app.config import settings
 
 from quixstreams import Application
+from datetime import timedelta
 import structlog
 
 
 logger = structlog.get_logger(settings.LOGGER_NAME)
+
 
 def trade_to_ohlcv(
     kafka_input_topic: str,
@@ -14,7 +16,7 @@ def trade_to_ohlcv(
 ) -> None:
     """
     Reads trades from Kafka input_topic,
-    aggregates them into OHLCV with specified window size and 
+    aggregates them into OHLCV with specified window size and
     writes OHLCV to Kafka output topic
 
     Args:
@@ -28,24 +30,62 @@ def trade_to_ohlcv(
     """
     app = Application(
         broker_address=kafka_broker_address,
-        consumer_group=settings.kafka.GROUP_ID, #In case we have multiple parallel trade-to-ohlcv jobs
-        auto_offset_reset=settings.kafka.AUTO_OFFSET_RESET
+        consumer_group=settings.kafka.GROUP_ID,  # In case we have multiple parallel trade-to-ohlcv jobs
+        auto_offset_reset=settings.kafka.AUTO_OFFSET_RESET,
     )
-    input_topic = app.topic(kafka_input_topic, value_serializer='json')
+    input_topic = app.topic(kafka_input_topic, value_serializer="json")
 
-    output_topic = app.topic(kafka_output_topic, value_serializer='json')
+    output_topic = app.topic(kafka_output_topic, value_serializer="json")
 
     # create a streaming dataframe
     # to apply transformations to data
     sdf = app.dataframe(input_topic)
 
     # aggregate trades into OHLCV
+    sdf = (sdf
+    .tumbling_window(duration_ms=timedelta(seconds=ohlcv_window_seconds))
+    .reduce(reducer=_update_ohlcv_candle, initializer=_init_ohlcv_candle)
+    .final()
+    )
+
     sdf = sdf.update(logger.debug)
 
     # write aggregated trades to Kafka output topic
     sdf.to_topic(output_topic)
 
     app.run(sdf)
+
+
+def _init_ohlcv_candle(value: dict) -> dict:
+    """
+    Initialize OHLCV candle with the first trade in the window
+    """
+    return {
+        "open": value["price"],
+        "high": value["price"],
+        "low": value["price"],
+        "close": value["price"],
+        "volume": value["qty"],
+    }
+
+def _update_ohlcv_candle(kline: dict, value: dict) -> dict:
+    """
+    Update OHLCV candle with the latest trade in the window
+
+    Args:
+        kline: dict : Current OHLCV candle
+        value: dict : Latest trade
+
+    Returns:
+        dict: Updated OHLCV candle
+    """
+    return {
+        "open": kline["open"],
+        "high": max(kline["high"], value["price"]),
+        "low": min(kline["low"], value["price"]),
+        "close": value["price"],
+        "volume": kline["volume"] + value["qty"],
+    }
 
 
 if __name__ == "__main__":
