@@ -8,14 +8,14 @@ from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DOTENV_PATH = os.path.join(BASE_DIR, ".env.trade_producer")
+DOTENV_PATH = os.path.join(BASE_DIR, ".env.trades_producer")
 load_dotenv(f"{DOTENV_PATH}")
 print(f"Loading .env from {DOTENV_PATH}")
 
 
 class KafkaSettings(BaseModel):
     BROKER_ADDRESS: str = os.getenv("KAFKA_BROKER_ADDRESS", "localhost:19092")
-    TRADES_TOPIC: str = os.getenv("KAFKA_TRADES_TOPIC", "trade")
+    TRADES_TOPIC: str = os.getenv("KAFKA_TRADES_TOPIC", "trades")
 
 
 class Settings(BaseSettings):
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     PROJECT_DESCRIPTION: str = "Produce trade stream to Redpanda"
     BASE_DIR: Path = BASE_DIR
     kafka: KafkaSettings = KafkaSettings()
-    LOGGER_NAME: str = "trade_producer"
+    LOGGER_NAME: str = "trades_producer"
     TRADES_SOURCE: TradeSourceName = TradeSourceName(os.getenv("TRADES_SOURCE", "kraken"))
 
 
