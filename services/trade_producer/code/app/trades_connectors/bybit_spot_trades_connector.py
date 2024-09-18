@@ -48,7 +48,7 @@ class BybitSpotTradesConnector(TradesConnector):
 			trade = Trade(
 				symbol=item.get("s"),
 				price=item.get("p"),
-				qty=item.get("q"),
+				qty=item.get("v"),
 				timestamp_ms=item.get("T"),
 			)
 			trades.append(trade)
