@@ -5,7 +5,7 @@ from typing import Dict
 
 from quixstreams import Application
 
-from .abstract.trades_connector import TradesConnector
+from app.abstract.trades_connector import TradesConnector
 from .config import settings
 from .trade_producers.bybit_spot_trades_connector import BybitSpotTradesConnector
 from .trade_producers.kraken_trades_connector import KrakenTradesConnector

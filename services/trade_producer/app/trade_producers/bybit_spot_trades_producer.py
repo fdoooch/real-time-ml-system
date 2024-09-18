@@ -4,8 +4,8 @@ from typing import Callable, Dict
 
 from pybit.unified_trading import WebSocket
 
-from src.abstract import TradesConnector
-from src.config import settings
+from app.abstract import TradesConnector
+from app.config import settings
 
 logger = logging.getLogger(settings.LOGGER_NAME)
 
