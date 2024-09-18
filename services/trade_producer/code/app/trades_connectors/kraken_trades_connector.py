@@ -9,6 +9,7 @@ from websockets import WebSocketClientProtocol
 
 from app.abstract import TradesConnector
 from app.config import settings
+from app.schemas.trade_schema import Trade
 
 logger = logging.getLogger(settings.LOGGER_NAME)
 
@@ -22,7 +23,7 @@ class KrakenTradesConnector(TradesConnector):
 	URL = "wss://ws.kraken.com/v2"
 
 	def __init__(self):
-		self._ws: WebSocketClientProtocol = None
+		self._ws: WebSocketClientProtocol | None = None
 		self._running = False  # Flag to control the message receiving loop
 
 	async def connect(self) -> None:
@@ -55,19 +56,15 @@ class KrakenTradesConnector(TradesConnector):
 			logger.error(f"An error occurred while receiving messages: {e}")
 
 	
-	def _extract_trades_from_websocket_message(self, msg_json: Dict) -> list[Dict]:
+	def _extract_trades_from_websocket_message(self, msg_json: dict) -> list[Trade]:
 		trades = []
 		for item in msg_json.get("data"):
-			print(item)
-			print(type(item))
-			print(f"symbol: {item.get('symbol')}")
-			print(f"symbol: {item.get('symbol').replace('/', '')}")
-			trade = {
-				"symbol": item.get("symbol").replace("/", ""),
-				"price": item.get("price"),
-				"qty": item.get("qty"),
-				"timestamp": convert_datetime_to_timestamp_in_ms(item.get("timestamp")),
-			}
+			trade = Trade(
+				symbol=item.get("symbol").replace("/", ""),
+				price=item.get("price"),
+				qty=item.get("qty"),
+				timestamp_ms= convert_datetime_to_timestamp_in_ms(item.get("timestamp")),
+			)
 			trades.append(trade)
 		return trades
 

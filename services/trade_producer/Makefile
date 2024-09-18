@@ -1,5 +1,5 @@
 build:
-	docker build -t trade_producer .
+	docker build --no-cache -t trade_producer .
 
 run:
 	docker run --network redpanda_network trade_producer

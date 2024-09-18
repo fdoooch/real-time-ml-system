@@ -1,0 +1,25 @@
+services:
+  trade-producer:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: trade-producer
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - "./code:/code"
+    networks:
+      - redpanda_network
+    env_file:
+      - .env.trade_producer
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: ["python","-m", "app.main"]
+
+
+networks:
+    redpanda_network:
+      external: true
+      name: redpanda_network

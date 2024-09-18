@@ -41,15 +41,15 @@ class BybitSpotTradesConnector(TradesConnector):
 	
 	def _callback_handler(self, msg: Dict) -> list[Dict]:
 		logger.debug(msg)
-		logger.debug(type(msg))
+
 		trades = []
 		for item in msg.get("data"):
 			logger.debug(item)	
-			trade = {
-				"symbol": item.get("s"),
-				"price": item.get("p"),
-				"qty": item.get("q"),
-				"timestamp": item.get("T"),
-			}
+			trade = Trade(
+				symbol=item.get("s"),
+				price=item.get("p"),
+				qty=item.get("q"),
+				timestamp_ms=item.get("T"),
+			)
 			trades.append(trade)
 		self.callback_handler(trades)
