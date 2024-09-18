@@ -1,12 +1,11 @@
 import structlog
-from quixstreams import Application
-
 from app.abstract.trades_connector import TradesConnector
 from app.config import settings
+from app.enums import TradeSourceName
+from app.schemas.trade_schema import Trade
 from app.trades_connectors.bybit_spot_trades_connector import BybitSpotTradesConnector
 from app.trades_connectors.kraken_trades_connector import KrakenTradesConnector
-from app.schemas.trade_schema import Trade
-from app.enums import TradeSourceName
+from quixstreams import Application
 
 logger = structlog.getLogger(settings.LOGGER_NAME)
 
@@ -37,17 +36,17 @@ class TradesProducer:
 
     def close(self) -> None:
         self.producer.flush()
-        
+
 
 def get_trades_connector() -> TradesConnector:
-	if settings.TRADES_SOURCE == TradeSourceName.KRAKEN:
-		return KrakenTradesConnector()
-	elif settings.TRADES_SOURCE == TradeSourceName.BYBIT_SPOT:
-		return BybitSpotTradesConnector()
-	raise NotImplementedError
+    if settings.TRADES_SOURCE == TradeSourceName.KRAKEN:
+        return KrakenTradesConnector()
+    elif settings.TRADES_SOURCE == TradeSourceName.BYBIT_SPOT:
+        return BybitSpotTradesConnector()
+    raise NotImplementedError
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     trades_connector = get_trades_connector()
     producer = TradesProducer(
         settings.kafka.BROKER_ADDRESS, settings.kafka.TRADES_TOPIC
