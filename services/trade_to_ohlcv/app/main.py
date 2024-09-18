@@ -40,7 +40,7 @@ def trade_to_ohlcv(
     sdf = app.dataframe(input_topic)
 
     # aggregate trades into OHLCV
-
+    sdf = sdf.update(logger.debug)
 
     # write aggregated trades to Kafka output topic
     sdf.to_topic(output_topic)
