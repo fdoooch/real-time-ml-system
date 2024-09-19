@@ -47,6 +47,13 @@ def trade_to_ohlcv(
     .reduce(reducer=_update_ohlcv_candle, initializer=_init_ohlcv_candle)
     .final()
     )
+    sdf['symbol'] = sdf['symbol'].astype(str)
+    sdf['open'] = sdf['open'].astype(float)
+    sdf['high'] = sdf['high'].astype(float)
+    sdf['low'] = sdf['low'].astype(float)
+    sdf['close'] = sdf['close'].astype(float)
+    sdf['volume'] = sdf['volume'].astype(float)
+    sdf['timestamp'] = sdf['start'].astype(int)
 
     sdf = sdf.update(logger.debug)
 
@@ -61,6 +68,7 @@ def _init_ohlcv_candle(value: dict) -> dict:
     Initialize OHLCV candle with the first trade in the window
     """
     return {
+        "symbol": value["symbol"],
         "open": value["price"],
         "high": value["price"],
         "low": value["price"],
@@ -80,6 +88,7 @@ def _update_ohlcv_candle(kline: dict, value: dict) -> dict:
         dict: Updated OHLCV candle
     """
     return {
+        "symbol": kline["symbol"],
         "open": kline["open"],
         "high": max(kline["high"], value["price"]),
         "low": min(kline["low"], value["price"]),
