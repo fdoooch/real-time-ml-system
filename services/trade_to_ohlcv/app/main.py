@@ -9,9 +9,10 @@ logger = structlog.get_logger(settings.LOGGER_NAME)
 
 
 def trade_to_ohlcv(
+    kafka_broker_address: str,
     kafka_input_topic: str,
     kafka_output_topic: str,
-    kafka_broker_address: str,
+    kafka_consumer_group: str,
     ohlcv_window_seconds: int,
 ) -> None:
     """
@@ -30,11 +31,10 @@ def trade_to_ohlcv(
     """
     app = Application(
         broker_address=kafka_broker_address,
-        consumer_group=settings.kafka.GROUP_ID,  # In case we have multiple parallel trade-to-ohlcv jobs
+        consumer_group=kafka_consumer_group,  # In case we have multiple parallel trade-to-ohlcv jobs
         auto_offset_reset=settings.kafka.AUTO_OFFSET_RESET,
     )
     input_topic = app.topic(kafka_input_topic, value_serializer="json")
-
     output_topic = app.topic(kafka_output_topic, value_serializer="json")
 
     # create a streaming dataframe
@@ -53,7 +53,7 @@ def trade_to_ohlcv(
     sdf['low'] = sdf['value']['low']
     sdf['close'] = sdf['value']['close']
     sdf['volume'] = sdf['value']['volume']
-    sdf['timestamp'] = sdf['start']
+    sdf['timestamp'] = sdf['end']
     sdf = sdf.update(logger.debug)
 
     sdf = sdf[['symbol', 'timestamp', 'open', 'high', 'low', 'close', 'volume']]
@@ -64,20 +64,20 @@ def trade_to_ohlcv(
     app.run(sdf)
 
 
-def _init_ohlcv_candle(value: dict) -> dict:
+def _init_ohlcv_candle(trade: dict) -> dict:
     """
     Initialize OHLCV candle with the first trade in the window
     """
     return {
-        "symbol": value["symbol"],
-        "open": value["price"],
-        "high": value["price"],
-        "low": value["price"],
-        "close": value["price"],
-        "volume": value["qty"],
+        "symbol": trade["symbol"],
+        "open": trade["price"],
+        "high": trade["price"],
+        "low": trade["price"],
+        "close": trade["price"],
+        "volume": trade["qty"],
     }
 
-def _update_ohlcv_candle(kline: dict, value: dict) -> dict:
+def _update_ohlcv_candle(kline: dict, trade: dict) -> dict:
     """
     Update OHLCV candle with the latest trade in the window
 
@@ -91,18 +91,19 @@ def _update_ohlcv_candle(kline: dict, value: dict) -> dict:
     return {
         "symbol": kline["symbol"],
         "open": kline["open"],
-        "high": max(kline["high"], value["price"]),
-        "low": min(kline["low"], value["price"]),
-        "close": value["price"],
-        "volume": kline["volume"] + value["qty"],
+        "high": max(kline["high"], trade["price"]),
+        "low": min(kline["low"], trade["price"]),
+        "close": trade["price"],
+        "volume": kline["volume"] + trade["qty"],
     }
 
 
 if __name__ == "__main__":
     logger.info("Starting trade_to_ohlcv")
     trade_to_ohlcv(
+        kafka_broker_address=settings.kafka.BROKER_ADDRESS,
         kafka_input_topic=settings.kafka.TRADES_TOPIC,
         kafka_output_topic=settings.kafka.OHLCV_TOPIC,
-        kafka_broker_address=settings.kafka.BROKER_ADDRESS,
+        kafka_consumer_group=settings.kafka.GROUP_ID,
         ohlcv_window_seconds=settings.OHLCV_WINDOW_SECONDS,
     )
