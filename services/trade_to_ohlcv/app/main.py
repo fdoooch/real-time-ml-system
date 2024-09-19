@@ -47,14 +47,13 @@ def trade_to_ohlcv(
     .reduce(reducer=_update_ohlcv_candle, initializer=_init_ohlcv_candle)
     .final()
     )
-    sdf['symbol'] = sdf['symbol'].astype(str)
-    sdf['open'] = sdf['open'].astype(float)
-    sdf['high'] = sdf['high'].astype(float)
-    sdf['low'] = sdf['low'].astype(float)
-    sdf['close'] = sdf['close'].astype(float)
-    sdf['volume'] = sdf['volume'].astype(float)
-    sdf['timestamp'] = sdf['start'].astype(int)
-
+    sdf['symbol'] = sdf['value']['symbol']
+    sdf['open'] = sdf['value']['open']
+    sdf['high'] = sdf['value']['high']
+    sdf['low'] = sdf['value']['low']
+    sdf['close'] = sdf['value']['close']
+    sdf['volume'] = sdf['value']['volume']
+    sdf['timestamp'] = sdf['value']['start']
     sdf = sdf.update(logger.debug)
 
     # write aggregated trades to Kafka output topic
