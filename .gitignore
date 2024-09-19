@@ -164,3 +164,4 @@ cython_debug/
 
 # quix temporary state folder
 services/trade_to_ohlcv/app/state
+state/
