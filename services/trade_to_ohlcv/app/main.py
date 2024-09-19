@@ -56,7 +56,7 @@ def trade_to_ohlcv(
     sdf['timestamp'] = sdf['start']
     sdf = sdf.update(logger.debug)
 
-    sdf = [['symbol', 'timestamp' 'open', 'high', 'low', 'close', 'volume']]
+    sdf = sdf[['symbol', 'timestamp' 'open', 'high', 'low', 'close', 'volume']]
 
     # write aggregated trades to Kafka output topic
     sdf.to_topic(output_topic)
