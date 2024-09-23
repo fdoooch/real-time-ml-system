@@ -1,0 +1,25 @@
+services:
+  trades-to-ohlcv:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: trades-to-ohlcv
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - "./app:/code/app"
+    networks:
+      - redpanda_network
+    env_file:
+      - .env.trades_to_ohlcv
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: ["python","-m", "app.main"]
+
+
+networks:
+    redpanda_network:
+      external: true
+      name: redpanda_network
