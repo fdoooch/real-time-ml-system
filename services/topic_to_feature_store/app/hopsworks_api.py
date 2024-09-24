@@ -7,7 +7,7 @@ import pandas as pd
 class FeatureGroupOptions:
     name: str
     version: int
-    primary_keys: list[str]
+    primary_key: list[str]
     event_time: str
     online_enabled: bool = True
 
@@ -31,7 +31,7 @@ def push_feature_to_store(
     trans_feature_group = feature_store.get_or_create_feature_group(
         name=options.name,
         version=options.version,
-        primary_keys=options.primary_keys,
+        primary_key=options.primary_keys,
         online_enabled=options.online_enabled,
         # expectation_suite=...
     )
