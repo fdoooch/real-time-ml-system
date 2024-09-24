@@ -21,7 +21,7 @@ RUN poetry install --only main
 
 
 # Stage 2: Runtime
-FROM python:3.11-slim-dev
+FROM python:3.11-slim
 
 # Copy installed python packages from builder stage
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
