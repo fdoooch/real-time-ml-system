@@ -36,7 +36,10 @@ def push_feature_to_store(
         # expectation_suite=...
     )
 
-
+    print("Pushing feature to store...")
+    print(feature)
+    print(type(feature))
+    breakpoint()
     feature_df = pd.DataFrame.from_dict(feature)
     trans_feature_group.insert(feature_df)
     print("✔️ Done")
