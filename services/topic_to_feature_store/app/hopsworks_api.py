@@ -31,12 +31,10 @@ def push_feature_to_store(
     trans_feature_group = feature_store.get_or_create_feature_group(
         name=options.name,
         version=options.version,
-        primary_key=options.primary_key,
+        primary_key=options.primary_key, # list[str]
         online_enabled=options.online_enabled,
         # expectation_suite=...
     )
-
-    print("Pushing feature to store...")
 
     if isinstance(feature, dict):
         if all(isinstance(v, (list, tuple)) for v in feature.values()):
@@ -45,6 +43,5 @@ def push_feature_to_store(
             feature_df = pd.DataFrame([feature])
     else:
         raise ValueError("Feature must be a dictionary")
-    breakpoint()
     trans_feature_group.insert(feature_df)
     print("✔️ Done")

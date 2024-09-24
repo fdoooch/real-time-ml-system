@@ -44,7 +44,6 @@ def topic_to_feature_store(
                 options=feature_group_options,
                 creds=feature_group_creds,
             )
-            breakpoint()
             # Storing offset only after the message is processed enables at-least-once processing
             consumer.store_offsets(message=msg)
 
@@ -54,7 +53,7 @@ def main():
     feature_group_options = FeatureGroupOptions(
         name=settings.hopsworks.FEATURE_GROUP_NAME,
         version=settings.hopsworks.FEATURE_GROUP_VERSION,
-        primary_key=["timestamp"],
+        primary_key=["timestamp", "symbol"],
         event_time="timestamp",
         online_enabled=True,
     )
