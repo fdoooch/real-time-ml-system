@@ -1,4 +1,5 @@
 import hopsworks
+from hsfs.feature_group import FeatureGroup
 from dataclasses import dataclass
 import pandas as pd
 
@@ -16,11 +17,11 @@ class FeatureGroupCreds:
     project_name: str
     api_key: str
 
-def push_feature_to_store(
-        feature: dict,
-        options: FeatureGroupOptions,
-        creds: FeatureGroupCreds,
-) -> None:
+
+def get_or_create_feature_group(
+    options: FeatureGroupOptions,
+    creds: FeatureGroupCreds,
+) -> FeatureGroup:
     project = hopsworks.login(
         project=creds.project_name, 
         api_key_value=creds.api_key,
@@ -28,14 +29,19 @@ def push_feature_to_store(
 
     feature_store = project .get_feature_store()
 
-    trans_feature_group = feature_store.get_or_create_feature_group(
+    return feature_store.get_or_create_feature_group(
         name=options.name,
         version=options.version,
-        primary_key=options.primary_key, # list[str]
+        primary_key=options.primary_key,
         online_enabled=options.online_enabled,
         # expectation_suite=...
     )
+        
 
+def push_feature_to_feature_group(
+        feature: dict,
+        feature_group: FeatureGroup,
+) -> None:
     if isinstance(feature, dict):
         if all(isinstance(v, (list, tuple)) for v in feature.values()):
             feature_df = pd.DataFrame(feature)
@@ -43,5 +49,5 @@ def push_feature_to_store(
             feature_df = pd.DataFrame([feature])
     else:
         raise ValueError("Feature must be a dictionary")
-    trans_feature_group.insert(feature_df)
+    feature_group.insert(feature_df)
     print("✔️ Done")
