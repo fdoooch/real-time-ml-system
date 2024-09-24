@@ -37,9 +37,14 @@ def push_feature_to_store(
     )
 
     print("Pushing feature to store...")
-    print(feature)
-    print(type(feature))
+
+    if isinstance(feature, dict):
+        if all(isinstance(v, (list, tuple)) for v in feature.values()):
+            feature_df = pd.DataFrame(feature)
+        else:
+            feature_df = pd.DataFrame([feature])
+    else:
+        raise ValueError("Feature must be a dictionary")
     breakpoint()
-    feature_df = pd.DataFrame.from_dict(feature)
     trans_feature_group.insert(feature_df)
     print("✔️ Done")
