@@ -16,7 +16,7 @@ class FeatureGroupCreds:
     project_name: str
     api_key: str
 
-def push_feature_to_to_store(
+def push_feature_to_store(
         feature: dict,
         options: FeatureGroupOptions,
         creds: FeatureGroupCreds,
