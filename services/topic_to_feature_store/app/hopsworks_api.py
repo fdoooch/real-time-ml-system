@@ -31,7 +31,7 @@ def push_feature_to_store(
     trans_feature_group = feature_store.get_or_create_feature_group(
         name=options.name,
         version=options.version,
-        primary_key=options.primary_keys,
+        primary_key=options.primary_key,
         online_enabled=options.online_enabled,
         # expectation_suite=...
     )
