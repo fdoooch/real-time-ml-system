@@ -16,7 +16,7 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    # command: ["python","-m", "app.main"]
+    command: ["python","-m", "app.main"]
 
 
 networks:
