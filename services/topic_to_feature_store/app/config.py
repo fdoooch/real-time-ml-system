@@ -26,6 +26,8 @@ class HopsworksSettings(BaseModel):
     PROJECT_NAME: str = os.getenv("HOPSWORKS_PROJECT_NAME")
     FEATURE_GROUP_NAME: str = os.getenv("FEATURE_GROUP_NAME", "ohlcv")
     FEATURE_GROUP_VERSION: int = os.getenv("FEATURE_GROUP_VERSION", 1)
+    FEATURE_GROUP_PRIMARY_KEYS: list[str] = os.getenv("FEATURE_GROUP_PRIMARY_KEYS", "timestamp_ms").split(",")
+    FEATURE_GROUP_EVENT_TIME: str = os.getenv("FEATURE_GROUP_EVENT_TIME", "timestamp_ms")
 
 
 class Settings(BaseSettings):

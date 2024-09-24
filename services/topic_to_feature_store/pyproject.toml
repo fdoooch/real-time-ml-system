@@ -6,8 +6,9 @@ authors = ["fdoooch <fdoooch@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 quixstreams = "^2.11.0"
+hopsworks = "^3.7.0"
 
 
 [build-system]

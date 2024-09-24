@@ -7,6 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
 
+# Install dependencies
+RUN apt-get update
+RUN apt-get install -y build-essential
+
 # Install Poetry
 RUN pip install --no-cache-dir poetry
 RUN poetry config virtualenvs.create false
@@ -17,7 +21,7 @@ RUN poetry install --only main
 
 
 # Stage 2: Runtime
-FROM python:3.11-slim
+FROM python:3.11-slim-dev
 
 # Copy installed python packages from builder stage
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
