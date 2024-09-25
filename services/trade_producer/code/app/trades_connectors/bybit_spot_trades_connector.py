@@ -28,7 +28,13 @@ class BybitSpotTradesConnector(TradesConnector):
 		self._ws: WebSocket = None
 		self._is_active = False
 
-	def subscribe_to_trades(self, symbols: list[str], callback_handler: Callable) -> None:
+	def subscribe_to_trades(
+		self,
+        symbols: list[str],
+        callback: Callable = None,
+        start_unix_epoch_ms: int | None = None,
+        end_unix_epoch_ms: int | None = None,
+	) -> None:
 		"""
 		Establishes a connection to the Bybit websocket API
 		"""
@@ -41,7 +47,7 @@ class BybitSpotTradesConnector(TradesConnector):
 			symbol=symbols,
 			callback=self._callback_handler,
 		)
-		self.callback_handler = callback_handler
+		self.callback_handler = callback
 		self._is_active = True
 		return None
 	

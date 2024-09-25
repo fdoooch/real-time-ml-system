@@ -74,7 +74,13 @@ class KrakenTradesConnector(TradesConnector):
 		return trades
 
 
-	def subscribe_to_trades(self, symbols: list[str], callback: Callable=None) -> None:
+	def subscribe_to_trades(
+		self,
+        symbols: list[str],
+        callback: Callable = None,
+        start_unix_epoch_ms: int | None = None,
+        end_unix_epoch_ms: int | None = None,
+	) -> None:
 		"""
 		Subscribes to trades for the specified symbols and calls the callback with received messages.
 		"""

@@ -48,7 +48,7 @@ class TradesProducer:
         self.sources.append(source)
         source.subscribe_to_trades(
             symbols=symbols, 
-            callback_handler=self.push_trade_to_queue,
+            callback=self.push_trade_to_queue,
             historical_start_ms=historical_start_ms,
             historical_end_ms=historical_end_ms
         )

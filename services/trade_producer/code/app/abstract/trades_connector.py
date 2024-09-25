@@ -18,7 +18,7 @@ class TradesConnector(ABC):
 	def subscribe_to_trades(
 		self, 
 		symbols: list[str], 
-		callback_handler: Callable,
+		callback: Callable,
 		historical_start_ms: int | None = None,
         historical_end_ms: int | None = None,
 	) -> None:
