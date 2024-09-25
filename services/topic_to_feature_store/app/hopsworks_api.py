@@ -41,23 +41,18 @@ def get_or_create_feature_group(
         
 
 def push_feature_to_feature_group(
-        feature: dict,
+        value: list[dict],
         feature_group: FeatureGroup,
         start_offline_materialization: bool,
 ) -> None:
-    if isinstance(feature, dict):
-        if all(isinstance(v, (list, tuple)) for v in feature.values()):
-            feature_df = pd.DataFrame(feature)
-        else:
-            feature_df = pd.DataFrame([feature])
-    else:
-        raise ValueError("Feature must be a dictionary")
+
+    value_df = pd.DataFrame(value)
     print(f"Pushing feature to feature group: {feature_group.name}")
     print(f"Online Enabled: {feature_group.online_enabled}")
     print(f"Start offline materialization: {start_offline_materialization}")
-    print(f"feature:\n{feature_df}")
+    print(f"feature:\n{value_df}")
     i, j = feature_group.insert(
-        features=feature_df,
+        features=value_df,
         write_options={
             "start_offline_materialization": start_offline_materialization,
         },

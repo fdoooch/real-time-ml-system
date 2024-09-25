@@ -21,6 +21,7 @@ def topic_to_feature_store(
     feature_group_options: FeatureGroupOptions,
     feature_group_creds: FeatureGroupCreds,
     start_offline_materialization: bool,
+    batch_size: int,
 ) -> None:
     """
     Push feature from kafka to Hopsworks
@@ -38,6 +39,8 @@ def topic_to_feature_store(
         options=feature_group_options,
         creds=feature_group_creds,
     )
+
+    batch = []
     with app.get_consumer() as consumer:
         consumer.subscribe(topics=[kafka_input_topic])
 
@@ -49,12 +52,21 @@ def topic_to_feature_store(
                 logger.error(f"Kafka error: {msg.error()}")
                 continue
             
-            feature = json.loads(msg.value().decode("utf-8"))
+            features = json.loads(msg.value().decode("utf-8"))
+            batch.append(features)
+
+            if len(batch) < batch_size:
+                logger.debug(f'Batch has size {len(batch)} < {batch_size:,}...')
+                continue
+
+            logger.debug(f'Batch has size {len(batch)} >= {batch_size:,}... Pushing data to Feature Store')
             push_feature_to_feature_group(
-                feature=feature,
+                value=batch,
                 feature_group=feature_group,
                 start_offline_materialization=start_offline_materialization,
             )
+
+            batch = []
             # push_feature_to_feature_store(
             #     options=feature_group_options,
             #     creds=feature_group_creds,
@@ -85,6 +97,7 @@ def main():
         feature_group_options=feature_group_options,
         feature_group_creds=feature_group_creds,
         start_offline_materialization=True,
+        batch_size=10
     )
 
 
