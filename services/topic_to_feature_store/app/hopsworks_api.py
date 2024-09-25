@@ -29,6 +29,8 @@ def get_or_create_feature_group(
     )
     feature_store = project.get_feature_store()
 
+    print(f"Online Enabled: {options.online_enabled}")
+
     return feature_store.get_or_create_feature_group(
         name=options.name,
         version=options.version,
@@ -50,7 +52,11 @@ def push_feature_to_feature_group(
             feature_df = pd.DataFrame([feature])
     else:
         raise ValueError("Feature must be a dictionary")
-    feature_group.insert(
+    print(f"Pushing feature to feature group: {feature_group.name}")
+    print(f"Online Enabled: {feature_group.online_enabled}")
+    print(f"Start offline materialization: {start_offline_materialization}")
+    print(f"feature: {feature_df}")
+    i, j = feature_group.insert(
         features=feature_df,
         write_options={
             "start_offline_materialization": start_offline_materialization,
