@@ -24,6 +24,7 @@ def get_or_create_feature_group(
     creds: FeatureGroupCreds,
 ) -> FeatureGroup:
     conn = hsfs.connection(
+        host="c.app.hopsworks.ai",
         project=creds.project_name,
         api_key_value=creds.api_key,
     )
