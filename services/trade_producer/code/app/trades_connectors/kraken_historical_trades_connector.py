@@ -40,8 +40,8 @@ class KrakenHistoricalTradesConnector(TradesConnector):
         self,
         symbols: list[str],
         callback: Callable = None,
-        start_unix_epoch_ms: int | None = None,
-        end_unix_epoch_ms: int | None = None,
+        historical_start_ms: int | None = None,
+        historical_end_ms: int | None = None,
     ) -> None:
         """
         Download trades for the specified symbols and calls the callback with received messages.
@@ -57,8 +57,8 @@ class KrakenHistoricalTradesConnector(TradesConnector):
             self._push_symbol_trades_to_callback(
                 symbol=symbol,
                 callback=callback,
-                start_unix_epoch_ms=start_unix_epoch_ms,
-                end_unix_epoch_ms=end_unix_epoch_ms,
+                start_unix_epoch_ms=historical_start_ms,
+                end_unix_epoch_ms=historical_end_ms,
             )
         self._is_active = False
         return None
