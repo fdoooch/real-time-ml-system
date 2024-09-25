@@ -26,10 +26,14 @@ def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
 
 class KrakenHistoricalTradesConnector(TradesConnector):
     API_URL = "https://api.kraken.com/0/public/Trades"
-    is_active: bool  # is connector produce any trades or not
+    _is_active: bool  # is connector produce any trades or not
+
+    @property
+    def is_active(self) -> bool:
+        return self._is_active
 
     def __init__(self):
-        self.is_active = False
+        self._is_active = False
 
 
     def subscribe_to_trades(
@@ -47,7 +51,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
                 :param start_unix_epoch_ms: The start timestamp in Unix epoch in milliseconds.
                 :param end_unix_epoch_ms: The end timestamp in Unix epoch in milliseconds.
         """
-        self.is_active = True
+        self._is_active = True
         symbols = [f"{symbol.split('USDT')[0]}/USDT" for symbol in symbols]
         for symbol in symbols:
             self._push_symbol_trades_to_callback(
@@ -56,7 +60,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
                 start_unix_epoch_ms=start_unix_epoch_ms,
                 end_unix_epoch_ms=end_unix_epoch_ms,
             )
-        self.is_active = False
+        self._is_active = False
         return None
 
     def _push_symbol_trades_to_callback(

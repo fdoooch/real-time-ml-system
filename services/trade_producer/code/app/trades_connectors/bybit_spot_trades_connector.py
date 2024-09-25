@@ -19,11 +19,15 @@ def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
 
 
 class BybitSpotTradesConnector(TradesConnector):
-	is_active: bool # is connector produce any trades or not
+	_is_active: bool # is connector produce any trades or not
+
+	@property
+	def is_active(self) -> bool:
+		return self._is_active
 
 	def __init__(self):
 		self._ws: WebSocket = None
-		self.is_active = False
+		self._is_active = False
 
 	def subscribe_to_trades(self, symbols: list[str], callback_handler: Callable) -> None:
 		"""
@@ -39,7 +43,7 @@ class BybitSpotTradesConnector(TradesConnector):
 			callback=self._callback_handler,
 		)
 		self.callback_handler = callback_handler
-		self.is_active = True
+		self._is_active = True
 		return None
 	
 	def _callback_handler(self, msg: Dict) -> list[Dict]:

@@ -20,11 +20,15 @@ def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
 
 class KrakenTradesConnector(TradesConnector):
 	URL = "wss://ws.kraken.com/v2"
-	is_active: bool # is connector produce any trades or not
+	_is_active: bool # is connector produce any trades or not
+
+	@property
+	def is_active(self) -> bool:
+		return self._is_active
 
 	def __init__(self):
 		self._ws: WebSocketClientProtocol | None = None
-		self.is_active = False
+		self._is_active = False
 		self._running = False  # Flag to control the message receiving loop
 
 	async def connect(self) -> None:
@@ -90,7 +94,7 @@ class KrakenTradesConnector(TradesConnector):
 
 			# Set the running flag and start receiving messages
 			self._running = True
-			self.is_active = True
+			self._is_active = True
 			await self._receive_messages(callback)
 
 		asyncio.run(run())
@@ -98,7 +102,7 @@ class KrakenTradesConnector(TradesConnector):
 	def stop(self):
 		"""Stops receiving messages."""
 		self._running = False
-		self.is_active = False
+		self._is_active = False
 		if self._ws:
 			asyncio.run(self._close())
 	
