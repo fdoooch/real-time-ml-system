@@ -3,8 +3,11 @@ from app.abstract.trades_connector import TradesConnector
 from app.config import settings
 from app.enums import TradeSourceName
 from app.schemas.trade_schema import Trade
-from app.trades_connectors.bybit_spot_trades_connector import BybitSpotTradesConnector
-from app.trades_connectors.kraken_trades_connector import KrakenTradesConnector
+from app.trades_connectors import (
+    BybitSpotTradesConnector,
+    KrakenHistoricalTradesConnector,
+    KrakenTradesConnector,
+)
 from quixstreams import Application
 
 logger = structlog.getLogger(settings.LOGGER_NAME)
@@ -40,8 +43,13 @@ class TradesProducer:
 
 def get_trades_connector() -> TradesConnector:
     if settings.TRADES_SOURCE == TradeSourceName.KRAKEN:
+        settings.kafka.TRADES_TOPIC = "trades_kraken"
         return KrakenTradesConnector()
+    elif settings.TRADES_SOURCE == TradeSourceName.KRAKEN_HISTORICAL:
+        settings.kafka.TRADES_TOPIC = "trades_kraken_historical"
+        return KrakenHistoricalTradesConnector()
     elif settings.TRADES_SOURCE == TradeSourceName.BYBIT_SPOT:
+        settings.kafka.TRADES_TOPIC = "trades_bybit_spot"
         return BybitSpotTradesConnector()
     raise NotImplementedError
 
