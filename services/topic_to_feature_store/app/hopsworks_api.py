@@ -71,6 +71,7 @@ def push_feature_to_feature_store(
         project=creds.project_name, 
         api_key_value=creds.api_key,
     )
+    print(f"OPTIONS: {options}")
 
     feature_store = project.get_feature_store()
 
