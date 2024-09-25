@@ -129,7 +129,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
                 timestamp_ms=int(trade[2] * 1000),
             )
             for trade in data["result"][symbol]
-            if (int(trade[2] * 1_000_000_000) < end_ns) and (int(trade[2] * 1_000_000_000) >= since_ns)
+            if (int(trade[2] * 1_000_000_000) < end_ns) and (int(trade[2] * 1_000) * 1_000_000 >= since_ns)
         ]
         time.sleep(1)
         return trades
