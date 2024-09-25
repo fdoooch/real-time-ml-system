@@ -90,8 +90,8 @@ def push_feature_to_feature_store(
         raise ValueError("Feature must be a dictionary")
     feature_group.insert(
         feature_df,
-        write_options={
-            "start_offline_materialization": start_offline_materialization,
-        },
+        # write_options={
+        #     "start_offline_materialization": start_offline_materialization,
+        # },
     )
     print("✔️ Done")
