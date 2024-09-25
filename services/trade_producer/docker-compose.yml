@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: trades-producer
-    restart: unless-stopped
+    restart: on-failure
     tty: true
     volumes:
       - "./code:/code"
