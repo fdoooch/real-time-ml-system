@@ -76,7 +76,12 @@ class KrakenHistoricalTradesConnector(TradesConnector):
         with httpx.Client() as client:
             while since_ns < end_ns:
                 try:
-                    trades = self._get_trades(client, symbol, since_ns, end_ns)
+                    trades = self._get_trades(
+                        symbol=symbol, 
+                        since_ns=since_ns, 
+                        end_ns=end_ns,
+                        http_session=client
+                    )
                 except TooManyRequestsToTradesSourceError as e:
                     logger.warning(e.message)
                     time.sleep(30)

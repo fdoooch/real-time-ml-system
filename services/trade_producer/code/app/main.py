@@ -43,10 +43,10 @@ class TradesProducer:
 
 def get_trades_connector() -> TradesConnector:
     if settings.TRADES_SOURCE == TradeSourceName.KRAKEN_SPOT:
-        settings.kafka.TRADES_TOPIC = "trades_kraken"
+        settings.kafka.TRADES_TOPIC = "trades_kraken_spot"
         return KrakenTradesConnector()
     elif settings.TRADES_SOURCE == TradeSourceName.KRAKEN_SPOT_HISTORICAL:
-        settings.kafka.TRADES_TOPIC = "trades_kraken_historical"
+        settings.kafka.TRADES_TOPIC = "trades_kraken_spot_historical"
         return KrakenHistoricalTradesConnector()
     elif settings.TRADES_SOURCE == TradeSourceName.BYBIT_SPOT:
         settings.kafka.TRADES_TOPIC = "trades_bybit_spot"
