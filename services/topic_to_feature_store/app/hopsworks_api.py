@@ -90,7 +90,7 @@ def push_feature_to_feature_store(
             feature_df = pd.DataFrame([feature])
     else:
         raise ValueError("Feature must be a dictionary")
-    
+    print(f"Feature: {feature_df}")
     feature_group.insert(
         features=feature_df,
         write_options={
