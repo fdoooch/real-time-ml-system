@@ -1,6 +1,7 @@
 from app.config import settings
 from app.hopsworks_api import (
     push_feature_to_feature_group,
+    push_feature_to_feature_store,
     get_or_create_feature_group, 
     FeatureGroupOptions, 
     FeatureGroupCreds,
@@ -33,10 +34,10 @@ def topic_to_feature_store(
         consumer_group=kafka_consumer_group,
         auto_offset_reset="earliest",
     )
-    feature_group = get_or_create_feature_group(
-        options=feature_group_options,
-        creds=feature_group_creds,
-    )
+    # feature_group = get_or_create_feature_group(
+    #     options=feature_group_options,
+    #     creds=feature_group_creds,
+    # )
     with app.get_consumer() as consumer:
         consumer.subscribe(topics=[kafka_input_topic])
 
@@ -49,9 +50,15 @@ def topic_to_feature_store(
                 continue
             
             feature = json.loads(msg.value().decode("utf-8"))
-            push_feature_to_feature_group(
+            # push_feature_to_feature_group(
+            #     feature=feature,
+            #     feature_group=feature_group,
+            #     start_offline_materialization=start_offline_materialization,
+            # )
+            push_feature_to_feature_store(
+                options=feature_group_options,
+                creds=feature_group_creds,
                 feature=feature,
-                feature_group=feature_group,
                 start_offline_materialization=start_offline_materialization,
             )
             # Storing offset only after the message is processed enables at-least-once processing
