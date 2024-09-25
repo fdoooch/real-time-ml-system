@@ -7,8 +7,9 @@ class TradesConnector(ABC):
 	def __init__(self): ...
 
 
-	@abstractmethod
+	
 	@property
+	@abstractmethod
 	def is_active(self) -> bool:
 		raise NotImplementedError
 
