@@ -102,6 +102,8 @@ if __name__ == "__main__":
     producer.subscribe_to_trades(
         symbols=["BTCUSDT", "ETHUSDT"],
         source=trades_connector,
+        historical_start_ms=historical_start_ms,
+        historical_end_ms=historical_end_ms,
         )
     try:
         while producer.is_active:
