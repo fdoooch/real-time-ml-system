@@ -98,7 +98,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
                 if trades:
                     callback(trades)
                     since_ns = trades[-1].timestamp_ms * 1_000_000 + 1
-                    logger.debug(f"since_ns: {since_ns}")
+                    logger.debug(f"since_ns: {since_ns}, end_ns: {end_ns}, last trade: {trades[-1].timestamp_ms}")
                 else:
                     break
 
@@ -129,7 +129,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
                 timestamp_ms=int(trade[2] * 1000),
             )
             for trade in data["result"][symbol]
-            if (int(trade[2] * 1_000_000_000) <= end_ns) and (int(trade[2] * 1_000_000_000) >= since_ns)
+            if (int(trade[2] * 1_000_000_000) < end_ns) and (int(trade[2] * 1_000_000_000) >= since_ns)
         ]
         time.sleep(1)
         return trades
