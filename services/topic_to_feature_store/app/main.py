@@ -1,7 +1,7 @@
 from app.config import settings
 from app.hopsworks_api import (
     push_feature_to_feature_group,
-    push_feature_to_feature_store,
+    # push_feature_to_feature_store,
     get_or_create_feature_group, 
     FeatureGroupOptions, 
     FeatureGroupCreds,
