@@ -84,7 +84,7 @@ def main():
         kafka_consumer_group=settings.kafka.CONSUMER_GROUP,
         feature_group_options=feature_group_options,
         feature_group_creds=feature_group_creds,
-        start_offline_materialization=False,
+        start_offline_materialization=True,
     )
 
 
