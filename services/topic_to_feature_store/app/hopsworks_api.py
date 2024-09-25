@@ -71,8 +71,6 @@ def push_feature_to_feature_store(
         project=creds.project_name, 
         api_key_value=creds.api_key,
     )
-    print(f"OPTIONS: {options}")
-
     feature_store = project.get_feature_store()
 
     feature_group = feature_store.get_or_create_feature_group(
@@ -90,9 +88,8 @@ def push_feature_to_feature_store(
             feature_df = pd.DataFrame([feature])
     else:
         raise ValueError("Feature must be a dictionary")
-    print(f"Feature: {feature_df}")
     feature_group.insert(
-        features=feature_df,
+        feature_df,
         write_options={
             "start_offline_materialization": start_offline_materialization,
         },
