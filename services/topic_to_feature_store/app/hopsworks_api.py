@@ -56,7 +56,7 @@ def push_feature_to_feature_group(
             "start_offline_materialization": start_offline_materialization,
         },
     )
-    print("✔️ Done")
+    # print("✔️ Done")
 
 
 # def push_feature_to_feature_store(
