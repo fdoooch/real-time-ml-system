@@ -96,8 +96,8 @@ if __name__ == "__main__":
     producer = TradesProducer(
         settings.kafka.BROKER_ADDRESS, settings.kafka.TRADES_TOPIC
     )
-    historical_start_ms = convert_str_to_ms(settings.KRAKEN_SPOT_HISTORICAL_START)   if settings.KRAKEN_SPOT_HISTORICAL_START else None
-    historical_end_ms = convert_str_to_ms(settings.KRAKEN_SPOT_HISTORICAL_END) if settings.KRAKEN_SPOT_HISTORICAL_END else None
+    historical_start_ms = convert_str_to_ms(settings.trades_source.HISTORICAL_SINCE)   if settings.trades_source.HISTORICAL_SINCE else None
+    historical_end_ms = convert_str_to_ms(settings.trades_source.HISTORICAL_END) if settings.trades_source.HISTORICAL_END else None
     producer.subscribe_to_trades(
         symbols=["BTCUSDT", "ETHUSDT"],
         source=trades_connector,

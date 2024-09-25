@@ -2,11 +2,10 @@ import datetime
 import logging
 from typing import Callable, Dict
 
-from pybit.unified_trading import WebSocket
-
 from app.abstract import TradesConnector
 from app.config import settings
 from app.schemas.trade_schema import Trade
+from pybit.unified_trading import WebSocket
 
 logger = logging.getLogger(settings.LOGGER_NAME)
 
