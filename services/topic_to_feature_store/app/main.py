@@ -19,6 +19,7 @@ def topic_to_feature_store(
     kafka_consumer_group: str,
     feature_group_options: FeatureGroupOptions,
     feature_group_creds: FeatureGroupCreds,
+    start_offline_materialization: bool,
 ) -> None:
     """
     Push feature from kafka to Hopsworks
@@ -51,6 +52,7 @@ def topic_to_feature_store(
             push_feature_to_feature_group(
                 feature=feature,
                 feature_group=feature_group,
+                start_offline_materialization=start_offline_materialization,
             )
             # Storing offset only after the message is processed enables at-least-once processing
             consumer.store_offsets(message=msg)
@@ -75,6 +77,7 @@ def main():
         kafka_consumer_group=settings.kafka.CONSUMER_GROUP,
         feature_group_options=feature_group_options,
         feature_group_creds=feature_group_creds,
+        start_offline_materialization=False,
     )
 
 

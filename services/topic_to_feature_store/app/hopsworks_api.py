@@ -41,6 +41,7 @@ def get_or_create_feature_group(
 def push_feature_to_feature_group(
         feature: dict,
         feature_group: FeatureGroup,
+        start_offline_materialization: bool,
 ) -> None:
     if isinstance(feature, dict):
         if all(isinstance(v, (list, tuple)) for v in feature.values()):
@@ -49,5 +50,10 @@ def push_feature_to_feature_group(
             feature_df = pd.DataFrame([feature])
     else:
         raise ValueError("Feature must be a dictionary")
-    feature_group.insert(feature_df)
+    feature_group.insert(
+        features=feature_df,
+        write_options={
+            "start_offline_materialization": start_offline_materialization,
+        },
+    )
     print("✔️ Done")
