@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 import structlog
 from app.abstract.trades_connector import TradesConnector
 from app.config import settings
@@ -14,16 +15,43 @@ logger = structlog.getLogger(settings.LOGGER_NAME)
 
 
 class TradesProducer:
-    def __init__(self, kafka_broker_address: str, kafka_topic: str) -> None:
+    sources = [TradesConnector]
+
+
+    @property
+    def is_active(self) -> bool:
+        for source in self.sources:
+            if source.is_active:
+                return True
+        return False
+
+    def __init__(
+        self, 
+        kafka_broker_address: str, 
+        kafka_topic: str,
+    ) -> None:
         logger.info("Initializing trades producer")
         logger.debug(kafka_broker_address)
+        self.sources = []
         self.kafka_broker_address = kafka_broker_address
         self.kafka = Application(self.kafka_broker_address)
         self.topic = self.kafka.topic(kafka_topic, value_serializer="json")
         self.producer = self.kafka.get_producer()
 
-    def subscribe_to_trades(self, symbols: list[str], source: TradesConnector) -> None:
-        source.subscribe_to_trades(symbols, self.push_trade_to_queue)
+    def subscribe_to_trades(
+        self, 
+        symbols: list[str], 
+        source: TradesConnector, 
+        historical_start_ms: int | None = None,
+        historical_end_ms: int | None = None,
+    ) -> None:
+        self.sources.append(source)
+        source.subscribe_to_trades(
+            symbols=symbols, 
+            callback_handler=self.push_trade_to_queue,
+            historical_start_ms=historical_start_ms,
+            historical_end_ms=historical_end_ms
+        )
 
     def push_trade_to_queue(self, trades: list[Trade]):
         for trade in trades:
@@ -54,14 +82,28 @@ def get_trades_connector() -> TradesConnector:
     raise NotImplementedError
 
 
+def convert_str_to_ms(date_str: str) -> int:
+    # Convert 
+    # "2022-01-01T00:00:00Z"
+    # to Unix timestamp in milliseconds
+    date = dt.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+    timestamp_ms = int(date.timestamp() * 1000)
+    return timestamp_ms
+
+
 if __name__ == "__main__":
     trades_connector = get_trades_connector()
     producer = TradesProducer(
         settings.kafka.BROKER_ADDRESS, settings.kafka.TRADES_TOPIC
     )
-    producer.subscribe_to_trades(["BTCUSDT", "ETHUSDT"], trades_connector)
+    historical_start_ms = convert_str_to_ms(settings.KRAKEN_SPOT_HISTORICAL_START)   if settings.KRAKEN_SPOT_HISTORICAL_START else None
+    historical_end_ms = convert_str_to_ms(settings.KRAKEN_SPOT_HISTORICAL_END) if settings.KRAKEN_SPOT_HISTORICAL_END else None
+    producer.subscribe_to_trades(
+        symbols=["BTCUSDT", "ETHUSDT"],
+        source=trades_connector,
+        )
     try:
-        while True:
+        while producer.is_active:
             ...
     except KeyboardInterrupt:
         ...

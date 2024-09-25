@@ -126,6 +126,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
             for trade in data["result"][symbol]
             if int(trade[2] * 1_000_000_000) < end_ns
         ]
+        time.sleep(1)
         return trades
 
     def stop(self):

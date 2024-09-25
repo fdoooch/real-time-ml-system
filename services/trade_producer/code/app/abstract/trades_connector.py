@@ -6,5 +6,21 @@ class TradesConnector(ABC):
 	@abstractmethod
 	def __init__(self): ...
 
+
 	@abstractmethod
-	def subscribe_to_trades(self, symbols: list[str], callback_handler: Callable) -> None: ...
+	@property
+	def is_active(self) -> bool:
+		raise NotImplementedError
+
+
+	@abstractmethod
+	def subscribe_to_trades(
+		self, 
+		symbols: list[str], 
+		callback_handler: Callable,
+		historical_start_ms: int | None = None,
+        historical_end_ms: int | None = None,
+	) -> None:
+		raise NotImplementedError
+
+

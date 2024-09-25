@@ -17,6 +17,11 @@ class KafkaSettings(BaseModel):
     BROKER_ADDRESS: str = os.getenv("KAFKA_BROKER_ADDRESS", "localhost:19092")
     TRADES_TOPIC: str = os.getenv("KAFKA_TRADES_TOPIC", "trades")
 
+class TradesSourceSettings(BaseModel):
+    NAME: TradeSourceName = TradeSourceName(os.getenv("TRADES_SOURCE__NAME", "kraken_spot"))
+    HISTORICAL_SINCE: str | None = os.getenv("TRADES_SOURCE__HISTORICAL_SINCE")
+    HISTORICAL_END: str | None = os.getenv("TRADES_SOURCE__HISTORICAL_END")
+
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Realtime Trade Producer"
@@ -25,7 +30,7 @@ class Settings(BaseSettings):
     BASE_DIR: Path = BASE_DIR
     kafka: KafkaSettings = KafkaSettings()
     LOGGER_NAME: str = "trades_producer"
-    TRADES_SOURCE: TradeSourceName = TradeSourceName(os.getenv("TRADES_SOURCE", "kraken"))
+    trades_source: TradesSourceSettings = TradesSourceSettings()
 
 
 settings = Settings()
