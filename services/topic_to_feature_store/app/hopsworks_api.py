@@ -55,7 +55,7 @@ def push_feature_to_feature_group(
     print(f"Pushing feature to feature group: {feature_group.name}")
     print(f"Online Enabled: {feature_group.online_enabled}")
     print(f"Start offline materialization: {start_offline_materialization}")
-    print(f"feature: {feature_df}")
+    print(f"feature:\n{feature_df}")
     i, j = feature_group.insert(
         features=feature_df,
         write_options={
