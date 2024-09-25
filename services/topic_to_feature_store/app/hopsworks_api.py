@@ -27,7 +27,7 @@ def get_or_create_feature_group(
         api_key_value=creds.api_key,
     )
 
-    feature_store = project .get_feature_store()
+    feature_store = project.get_feature_store()
 
     return feature_store.get_or_create_feature_group(
         name=options.name,
@@ -70,7 +70,7 @@ def push_feature_to_feature_store(
         api_key_value=creds.api_key,
     )
 
-    feature_store = project .get_feature_store()
+    feature_store = project.get_feature_store()
 
     feature_group = feature_store.get_or_create_feature_group(
         name=options.name,
