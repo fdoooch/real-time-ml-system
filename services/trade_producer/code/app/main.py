@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+
 import structlog
 from app.abstract.trades_connector import TradesConnector
 from app.config import settings

@@ -67,8 +67,8 @@ class KrakenHistoricalTradesConnector(TradesConnector):
         self,
         symbol: str,
         callback: Callable,
-        start_unix_epoch_ms: int | None = None,
-        end_unix_epoch_ms: int | None = None,
+        start_unix_epoch_ms: int | None,
+        end_unix_epoch_ms: int | None,
     ) -> None:
         since_ns = start_unix_epoch_ms * 1_000_000 if start_unix_epoch_ms else 0
 
@@ -98,6 +98,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
                 if trades:
                     callback(trades)
                     since_ns = trades[-1].timestamp_ms * 1_000_000 + 1
+                    logger.debug(f"since_ns: {since_ns}")
                 else:
                     break
 
@@ -128,7 +129,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
                 timestamp_ms=int(trade[2] * 1000),
             )
             for trade in data["result"][symbol]
-            if int(trade[2] * 1_000_000_000) < end_ns
+            if (int(trade[2] * 1_000_000_000) <= end_ns) and (int(trade[2] * 1_000_000_000) >= since_ns)
         ]
         time.sleep(1)
         return trades
@@ -148,6 +149,10 @@ def test():
     end_ms = datetime.datetime.now().timestamp() * 1000
     end_ns = end_ms * 1_000_000
 
+    print(f"since_ms: {since_ms}")
+    print(f"since_ns: {since_ns}")
+    print(f"end_ms: {end_ms}")
+    print(f"end_ns: {end_ns}")
     with httpx.Client() as client:
         trades = KrakenHistoricalTradesConnector()._get_trades(
             "BTC/USDT", since_ns, end_ns, client
