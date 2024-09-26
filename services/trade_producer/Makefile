@@ -27,7 +27,7 @@ run-live: build
 		--network redpanda_network \
 		--env-file $(PROD_ENV_FILE) \
 		--restart unless-stopped \
-		--volume "./code:/code" \
+		--volume "./app:/code/app" \
 		--name $(LIVE_CONTAINER_NAME) \
 		$(IMAGE_NAME) python -m app.main
 

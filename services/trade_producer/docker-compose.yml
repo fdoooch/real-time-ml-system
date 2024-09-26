@@ -7,7 +7,7 @@ services:
     restart: on-failure
     tty: true
     volumes:
-      - "./code:/code"
+      - "./app:/code/app"
     networks:
       - redpanda_network
     env_file:
