@@ -2,11 +2,12 @@
 IMAGE_NAME := trade_producer
 DEV_ENV_FILE := live.dev.env
 PROD_ENV_FILE := live.prod.env
+HISTORICAL_PROD_ENV_FILE := .env.historical.prod
 LIVE_CONTAINER_NAME := trade-producer
 HISTORICAL_CONTAINER_NAME := trade-producer-historical
 
 # Phony targets
-.PHONY: run-live-dev run-live-prod build rebuild run-live lint format clean
+.PHONY: run-live-dev run-live-prod run-historical-prod build rebuild logs logs-historical lint format clean
 
 # Development run
 run-live-dev:
@@ -22,7 +23,7 @@ rebuild:
 	docker build --no-cache -t $(IMAGE_NAME) .
 
 # Run live Docker container
-run-live: build
+run-live-prod:
 	docker run \
 		--network redpanda_network \
 		--env-file $(PROD_ENV_FILE) \
@@ -30,6 +31,16 @@ run-live: build
 		--volume "./app:/code/app" \
 		--name $(LIVE_CONTAINER_NAME) \
 		$(IMAGE_NAME) python -m app.main
+
+run-historical:
+	docker run \
+		--network redpanda_network \
+		--env-file $(HISTORICAL_PROD_ENV_FILE) \
+		--restart unless-stopped \
+		--volume "./app:/code/app" \
+		--name $(HISTORICAL_CONTAINER_NAME) \
+		$(IMAGE_NAME) python -m app.main
+
 
 logs: 
 	docker logs -f $(LIVE_CONTAINER_NAME)
