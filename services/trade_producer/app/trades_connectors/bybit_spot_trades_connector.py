@@ -33,8 +33,8 @@ class BybitSpotTradesConnector(TradesConnector):
 		self,
 		symbols: list[str],
 		callback: Callable = None,
-		start_unix_epoch_ms: int | None = None,
-		end_unix_epoch_ms: int | None = None,
+		historical_start_ms: int | None = None,
+		historical_end_ms: int | None = None,
 	) -> None:
 		"""
 		Establishes a connection to the Bybit websocket API
