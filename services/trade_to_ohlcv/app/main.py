@@ -13,6 +13,7 @@ logger = structlog.get_logger(settings.LOGGER_NAME)
 
 def _custom_ts_extractor(
 		trade: dict,
+		headers: list[tuple[str, bytes]] | None,
 		timestamp: float,
 		timestamp_type
 	) -> int:
