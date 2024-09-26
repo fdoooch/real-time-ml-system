@@ -18,7 +18,7 @@ def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
 
 
 class BybitSpotTradesConnector(TradesConnector):
-	_is_active: bool # is connector produce any trades or not
+	_is_active: bool  # is connector produce any trades or not
 
 	@property
 	def is_active(self) -> bool:
@@ -30,10 +30,10 @@ class BybitSpotTradesConnector(TradesConnector):
 
 	def subscribe_to_trades(
 		self,
-        symbols: list[str],
-        callback: Callable = None,
-        start_unix_epoch_ms: int | None = None,
-        end_unix_epoch_ms: int | None = None,
+		symbols: list[str],
+		callback: Callable = None,
+		start_unix_epoch_ms: int | None = None,
+		end_unix_epoch_ms: int | None = None,
 	) -> None:
 		"""
 		Establishes a connection to the Bybit websocket API
@@ -50,13 +50,13 @@ class BybitSpotTradesConnector(TradesConnector):
 		self.callback_handler = callback
 		self._is_active = True
 		return None
-	
+
 	def _callback_handler(self, msg: Dict) -> list[Dict]:
 		logger.debug(msg)
 
 		trades = []
 		for item in msg.get("data"):
-			logger.debug(item)	
+			logger.debug(item)
 			trade = Trade(
 				symbol=item.get("s"),
 				price=item.get("p"),

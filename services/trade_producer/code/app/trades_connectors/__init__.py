@@ -1,7 +1,7 @@
 __all__ = [
-    "BybitSpotTradesConnector",
-    "KrakenTradesConnector",
-    "KrakenHistoricalTradesConnector",
+	"BybitSpotTradesConnector",
+	"KrakenTradesConnector",
+	"KrakenHistoricalTradesConnector",
 ]
 
 from .bybit_spot_trades_connector import BybitSpotTradesConnector

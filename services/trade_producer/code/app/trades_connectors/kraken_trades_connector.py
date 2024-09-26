@@ -14,13 +14,13 @@ logger = logging.getLogger(settings.LOGGER_NAME)
 
 
 def convert_datetime_to_timestamp_in_ms(dt_str: str) -> int:
-    dt = datetime.datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
-    return int(dt.timestamp() * 1000)
+	dt = datetime.datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
+	return int(dt.timestamp() * 1000)
 
 
 class KrakenTradesConnector(TradesConnector):
 	URL = "wss://ws.kraken.com/v2"
-	_is_active: bool # is connector produce any trades or not
+	_is_active: bool  # is connector produce any trades or not
 
 	@property
 	def is_active(self) -> bool:
@@ -34,7 +34,6 @@ class KrakenTradesConnector(TradesConnector):
 	async def connect(self) -> None:
 		self._ws = await websockets.connect(self.URL)
 
-
 	async def _receive_messages(self, callback: Callable):
 		"""Handles receiving messages from the WebSocket."""
 		try:
@@ -44,7 +43,7 @@ class KrakenTradesConnector(TradesConnector):
 
 				if msg_json.get("channel") in ["status", "heartbeat"]:
 					continue
-				
+
 				if msg_json.get("method") == "subscribe" and msg_json.get("success"):
 					logger.info(f"Subscribed to {msg_json.get('result').get('symbol')}")
 					continue
@@ -60,7 +59,6 @@ class KrakenTradesConnector(TradesConnector):
 		except Exception as e:
 			logger.error(f"An error occurred while receiving messages: {e}")
 
-	
 	def _extract_trades_from_websocket_message(self, msg_json: dict) -> list[Trade]:
 		trades = []
 		for item in msg_json.get("data"):
@@ -68,18 +66,17 @@ class KrakenTradesConnector(TradesConnector):
 				symbol=item.get("symbol").replace("/", ""),
 				price=item.get("price"),
 				qty=item.get("qty"),
-				timestamp_ms= convert_datetime_to_timestamp_in_ms(item.get("timestamp")),
+				timestamp_ms=convert_datetime_to_timestamp_in_ms(item.get("timestamp")),
 			)
 			trades.append(trade)
 		return trades
 
-
 	def subscribe_to_trades(
 		self,
-        symbols: list[str],
-        callback: Callable = None,
-        start_unix_epoch_ms: int | None = None,
-        end_unix_epoch_ms: int | None = None,
+		symbols: list[str],
+		callback: Callable = None,
+		start_unix_epoch_ms: int | None = None,
+		end_unix_epoch_ms: int | None = None,
 	) -> None:
 		"""
 		Subscribes to trades for the specified symbols and calls the callback with received messages.
@@ -111,7 +108,7 @@ class KrakenTradesConnector(TradesConnector):
 		self._is_active = False
 		if self._ws:
 			asyncio.run(self._close())
-	
+
 	def close(self):
 		self.stop()
 
