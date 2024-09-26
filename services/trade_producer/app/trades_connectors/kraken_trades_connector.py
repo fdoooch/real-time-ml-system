@@ -5,10 +5,11 @@ import logging
 from typing import Callable
 
 import websockets
+from websockets import WebSocketClientProtocol
+
 from app.abstract import TradesConnector
 from app.config import settings
 from app.schemas.trade_schema import Trade
-from websockets import WebSocketClientProtocol
 
 logger = logging.getLogger(settings.LOGGER_NAME)
 

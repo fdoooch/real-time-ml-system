@@ -4,6 +4,7 @@ import time
 from typing import Callable
 
 import httpx
+
 from app.abstract import TradesConnector
 from app.config import settings
 from app.schemas.trade_schema import Trade

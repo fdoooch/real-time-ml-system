@@ -1,6 +1,8 @@
 from datetime import datetime as dt
 
 import structlog
+from quixstreams import Application
+
 from app.abstract.trades_connector import TradesConnector
 from app.config import settings
 from app.enums import TradeSourceName
@@ -10,7 +12,6 @@ from app.trades_connectors import (
 	KrakenHistoricalTradesConnector,
 	KrakenTradesConnector,
 )
-from quixstreams import Application
 
 logger = structlog.getLogger(settings.LOGGER_NAME)
 
