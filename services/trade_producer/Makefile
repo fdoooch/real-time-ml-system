@@ -1,7 +1,7 @@
 # Variables
 IMAGE_NAME := trade_producer
-DEV_ENV_FILE := live.dev.env
-PROD_ENV_FILE := live.prod.env
+DEV_ENV_FILE := .env.live.dev
+PROD_ENV_FILE := .env.live.prod
 HISTORICAL_PROD_ENV_FILE := .env.historical.prod
 LIVE_CONTAINER_NAME := trade-producer
 HISTORICAL_CONTAINER_NAME := trade-producer-historical
