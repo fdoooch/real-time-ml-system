@@ -11,6 +11,18 @@ from app.config import settings
 logger = structlog.get_logger(settings.LOGGER_NAME)
 
 
+def _custom_ts_extractor(
+		trade: dict,
+		timestamp: float,
+		timestamp_type
+	) -> int:
+	"""
+	Specifying a custom timestamp extractor to use the timestamp from trade-messages instead of kafka timestamp
+	"""
+	logger.debug(f"timestamp_type: {timestamp_type}, ({type(timestamp_type)})")
+	return trade["timestamp_ms"]
+
+
 def trade_to_ohlcv(
 	kafka_broker_address: str,
 	kafka_input_topic: str,
@@ -38,7 +50,9 @@ def trade_to_ohlcv(
 		consumer_group=kafka_consumer_group,  # In case we have multiple parallel trade-to-ohlcv jobs
 		auto_offset_reset=kafka_auto_offset_reset,
 	)
-	input_topic = app.topic(kafka_input_topic, value_serializer="json")
+
+
+	input_topic = app.topic(kafka_input_topic, value_serializer="json", timestamp_extractor=_custom_ts_extractor)
 	output_topic = app.topic(kafka_output_topic, value_serializer="json")
 
 	# create a streaming dataframe
