@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings
 from app.enums import TradeSourceName
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DOTENV_PATH = os.path.join(BASE_DIR, ".env.trades_producer")
+DOTENV_PATH = os.path.join(BASE_DIR, ".env")
 load_dotenv(f"{DOTENV_PATH}")
 print(f"Loading .env from {DOTENV_PATH}")
 
