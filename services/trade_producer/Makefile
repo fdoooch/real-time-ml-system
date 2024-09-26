@@ -32,7 +32,7 @@ run-live-prod:
 		--name $(LIVE_CONTAINER_NAME) \
 		$(IMAGE_NAME) python -m app.main
 
-run-historical:
+run-historical-prod:
 	docker run \
 		--network redpanda_network \
 		--env-file $(HISTORICAL_PROD_ENV_FILE) \
