@@ -36,7 +36,7 @@ run-historical-prod:
 	docker run \
 		--network redpanda_network \
 		--env-file $(HISTORICAL_PROD_ENV_FILE) \
-		--restart unless-stopped \
+		--restart on-failure \
 		--volume "./app:/code/app" \
 		--name $(HISTORICAL_CONTAINER_NAME) \
 		$(IMAGE_NAME) python -m app.main
