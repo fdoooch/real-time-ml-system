@@ -11,6 +11,20 @@ quixstreams = "^2.10.0"
 structlog = "^24.4.0"
 
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.5"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"
+docstring-code-format = true
+
+[tool.ruff.lint]
+extend-select = ["I"]

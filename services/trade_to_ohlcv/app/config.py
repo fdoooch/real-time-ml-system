@@ -14,10 +14,12 @@ print(f"Loading .env from {DOTENV_PATH}")
 
 class KafkaSettings(BaseModel):
 	BROKER_ADDRESS: str = os.getenv("KAFKA_BROKER_ADDRESS", "localhost:19092")
-	AUTO_OFFSET_RESET: str = os.getenv("KAFKA_AUTO_OFFSET_RESET", "latest") # earliest, latest, error
+	AUTO_OFFSET_RESET: str = os.getenv(
+		"KAFKA_AUTO_OFFSET_RESET", "latest"
+	)  # earliest, latest, error
 	TRADES_TOPIC: str = os.getenv("KAFKA_TRADES_TOPIC", "trade")
 	OHLCV_TOPIC: str = os.getenv("KAFKA_OHLCV_TOPIC", "ohlcv")
-	GROUP_ID: str = os.getenv("KAFKA_GROUP_ID", "trades_to_ohlcv")
+	CONSUMER_GROUP: str = os.getenv("KAFKA_CONSUMER_GROUP", "trades_to_ohlcv")
 
 
 class Settings(BaseSettings):
