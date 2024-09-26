@@ -51,8 +51,25 @@ format:
 
 # Clean up
 clean:
-	docker stop $(LIVE_CONTAINER_NAME) || true
-	docker stop $(HISTORICAL_CONTAINER_NAME) || true
-	docker rm $(LIVE_CONTAINER_NAME) || true
-	docker rm $(HISTORICAL_CONTAINER_NAME) || true
-	rm -f .env
+	@echo "Cleaning up..."
+	@if docker ps -a --format '{{.Names}}' | grep -q "^$(LIVE_CONTAINER_NAME)$$"; then \
+		echo "Stopping and removing $(LIVE_CONTAINER_NAME) container..."; \
+		docker stop $(LIVE_CONTAINER_NAME); \
+		docker rm $(LIVE_CONTAINER_NAME); \
+	else \
+		echo "$(LIVE_CONTAINER_NAME) container not found. Skipping."; \
+	fi
+	@if docker ps -a --format '{{.Names}}' | grep -q "^$(HISTORICAL_CONTAINER_NAME)$$"; then \
+		echo "Stopping and removing $(HISTORICAL_CONTAINER_NAME) container..."; \
+		docker stop $(HISTORICAL_CONTAINER_NAME); \
+		docker rm $(HISTORICAL_CONTAINER_NAME); \
+	else \
+		echo "$(HISTORICAL_CONTAINER_NAME) container not found. Skipping."; \
+	fi
+	@if [ -f .env ]; then \
+		echo "Removing .env file..."; \
+		rm -f .env; \
+	else \
+		echo ".env file not found. Skipping."; \
+	fi
+	@echo "Clean up complete."
