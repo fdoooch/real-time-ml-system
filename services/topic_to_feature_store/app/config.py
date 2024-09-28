@@ -25,10 +25,10 @@ class HopsworksSettings(BaseModel):
     API_KEY: str = os.getenv("HOPSWORKS_API_KEY")
     PROJECT_NAME: str = os.getenv("HOPSWORKS_PROJECT_NAME")
     FEATURE_GROUP_NAME: str = os.getenv("FEATURE_GROUP_NAME", "ohlcv")
-    FEATURE_GROUP_VERSION: int = os.getenv("FEATURE_GROUP_VERSION", 1)
+    FEATURE_GROUP_VERSION: int = int(os.getenv("FEATURE_GROUP_VERSION", 1))
     FEATURE_GROUP_PRIMARY_KEYS: list[str] = os.getenv("FEATURE_GROUP_PRIMARY_KEYS", "symbol,timestamp_ms").split(",")
     FEATURE_GROUP_EVENT_TIME: str = os.getenv("FEATURE_GROUP_EVENT_TIME", "timestamp_ms")
-    PUSHING_BATCH_SIZE: int = os.getenv("HOPSWORKS_PUSHING_BATCH_SIZE", 10)
+    PUSHING_BATCH_SIZE: int = int(os.getenv("HOPSWORKS_PUSHING_BATCH_SIZE", 10))
     START_OFFLINE_MATERIALIZATION: bool = os.getenv("HOPSWORKS_START_OFFLINE_MATERIALIZATION", False)
 
 class Settings(BaseSettings):
