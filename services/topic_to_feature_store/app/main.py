@@ -19,7 +19,6 @@ def topic_to_feature_store(
     kafka_input_topic: str,
     kafka_consumer_group: str,
     feature_group_options: FeatureGroupOptions,
-    feature_group_creds: FeatureGroupCreds,
     start_offline_materialization: bool,
     batch_size: int,
 ) -> None:
@@ -37,7 +36,6 @@ def topic_to_feature_store(
     )
     feature_group = get_or_create_feature_group(
         options=feature_group_options,
-        creds=feature_group_creds,
     )
 
     batch = []
@@ -79,25 +77,25 @@ def topic_to_feature_store(
 
 
 def main():
+    feature_group_creds = FeatureGroupCreds(
+        project_name=settings.hopsworks.PROJECT_NAME,
+        api_key=settings.hopsworks.API_KEY,
+    )
     feature_group_options = FeatureGroupOptions(
         name=settings.hopsworks.FEATURE_GROUP_NAME,
         version=settings.hopsworks.FEATURE_GROUP_VERSION,
         primary_key=["timestamp", "symbol"],
         event_time="timestamp",
         online_enabled=True,
-    )
-    feature_group_creds = FeatureGroupCreds(
-        project_name=settings.hopsworks.PROJECT_NAME,
-        api_key=settings.hopsworks.API_KEY,
+        creds=feature_group_creds,
     )
     topic_to_feature_store(
         kafka_broker_address=settings.kafka.BROKER_ADDRESS,
         kafka_input_topic=settings.kafka.INPUT_TOPIC,
         kafka_consumer_group=settings.kafka.CONSUMER_GROUP,
         feature_group_options=feature_group_options,
-        feature_group_creds=feature_group_creds,
-        start_offline_materialization=True,
-        batch_size=10
+        start_offline_materialization=settings.hopsworks.START_OFFLINE_MATERIALIZATION,
+        batch_size=settings.hopsworks.PUSHING_BATCH_SIZE
     )
 
 

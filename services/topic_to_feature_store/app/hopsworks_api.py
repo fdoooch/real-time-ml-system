@@ -1,9 +1,13 @@
 import hopsworks
-import hsfs
 from hsfs.feature_group import FeatureGroup
 from dataclasses import dataclass
 import pandas as pd
 
+
+@dataclass
+class FeatureGroupCreds:
+    project_name: str
+    api_key: str
 
 @dataclass
 class FeatureGroupOptions:
@@ -11,21 +15,17 @@ class FeatureGroupOptions:
     version: int
     primary_key: list[str]
     event_time: str
+    creds: FeatureGroupCreds
     online_enabled: bool = True
 
-@dataclass
-class FeatureGroupCreds:
-    project_name: str
-    api_key: str
 
 
 def get_or_create_feature_group(
     options: FeatureGroupOptions,
-    creds: FeatureGroupCreds,
 ) -> FeatureGroup:
     project = hopsworks.login(
-        project=creds.project_name, 
-        api_key_value=creds.api_key,
+        project=options.creds.project_name, 
+        api_key_value=options.creds.api_key,
     )
     feature_store = project.get_feature_store()
 

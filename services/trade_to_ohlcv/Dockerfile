@@ -1,4 +1,4 @@
-# FROM python:3.11-slim-buster
+# Stage 1: Builder
 FROM python:3.11 AS builder
 
 # stream output to console

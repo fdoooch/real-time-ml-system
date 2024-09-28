@@ -1,4 +1,4 @@
-# FROM python:3.11-slim-buster
+# Stage 1: Builder
 FROM python:3.11 AS builder
 
 # stream output to console
@@ -6,10 +6,6 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /app
-
-# Install dependencies
-RUN apt-get update
-RUN apt-get install -y build-essential
 
 # Install Poetry
 RUN pip install --no-cache-dir poetry
