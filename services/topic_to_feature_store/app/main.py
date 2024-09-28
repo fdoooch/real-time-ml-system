@@ -11,14 +11,21 @@ from quixstreams import Application
 import json
 import time
 import logging
+from dataclasses import dataclass
 
 logger = logging.getLogger(settings.LOGGER_NAME)
 
 
+@dataclass
+class KafkaOptions:
+    broker_address: str
+    input_topic: str
+    consumer_group: str
+    auto_offset_reset: str = "latest"
+
+
 def topic_to_feature_store(
-    kafka_broker_address: str,
-    kafka_input_topic: str,
-    kafka_consumer_group: str,
+    kafka_options: KafkaOptions,
     feature_group_options: FeatureGroupOptions,
     start_offline_materialization: bool,
     batch_size: int,
@@ -32,9 +39,9 @@ def topic_to_feature_store(
     """
     logger.info("Starting application")
     app = Application(
-        broker_address=kafka_broker_address,
-        consumer_group=kafka_consumer_group,
-        auto_offset_reset="earliest",
+        broker_address=kafka_options.broker_address,
+        consumer_group=kafka_options.consumer_group,
+        auto_offset_reset=kafka_options.auto_offset_reset,
     )
     feature_group = get_or_create_feature_group(
         options=feature_group_options,
@@ -42,7 +49,7 @@ def topic_to_feature_store(
 
     batch = []
     with app.get_consumer() as consumer:
-        consumer.subscribe(topics=[kafka_input_topic])
+        consumer.subscribe(topics=[kafka_options.input_topic])
 
         while True:
             msg = consumer.poll(timeout=1.0)
@@ -82,6 +89,12 @@ def topic_to_feature_store(
 
 
 def main():
+    kafka_options = KafkaOptions(
+        broker_address=settings.kafka.BROKER_ADDRESS,
+        input_topic=settings.kafka.INPUT_TOPIC,
+        consumer_group=settings.kafka.CONSUMER_GROUP,
+        auto_offset_reset=settings.kafka.AUTO_OFFSET_RESET,
+    )
     feature_group_creds = FeatureGroupCreds(
         project_name=settings.hopsworks.PROJECT_NAME,
         api_key=settings.hopsworks.API_KEY,
@@ -95,9 +108,7 @@ def main():
         creds=feature_group_creds,
     )
     topic_to_feature_store(
-        kafka_broker_address=settings.kafka.BROKER_ADDRESS,
-        kafka_input_topic=settings.kafka.INPUT_TOPIC,
-        kafka_consumer_group=settings.kafka.CONSUMER_GROUP,
+        kafka_options=kafka_options,
         feature_group_options=feature_group_options,
         start_offline_materialization=settings.hopsworks.START_OFFLINE_MATERIALIZATION,
         batch_size=settings.hopsworks.PUSHING_BATCH_SIZE,

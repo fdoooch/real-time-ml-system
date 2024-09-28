@@ -17,6 +17,7 @@ class KafkaSettings(BaseModel):
     BROKER_ADDRESS: str = os.getenv("KAFKA_BROKER_ADDRESS", "localhost:19092")
     INPUT_TOPIC: str = os.getenv("KAFKA_INPUT_TOPIC", "ohlcv")
     CONSUMER_GROUP: str = os.getenv("KAFKA_CONSUMER_GROUP", "ohlcv_to_feature_store")
+    AUTO_OFFSET_RESET: str = os.getenv("KAFKA_AUTO_OFFSET_RESET", "latest")
 
 
 class HopsworksSettings(BaseModel):
