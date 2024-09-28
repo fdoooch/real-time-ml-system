@@ -1,0 +1,26 @@
+name: feature-live-pipeline
+services:
+  trades-producer:
+    build: 
+      context: ../services/trade_producer
+      dockerfile: Dockerfile
+    container_name: trades-producer
+    restart: on-failure
+    tty: true
+    volumes:
+      - "./app:/code/app"
+    networks:
+      - redpanda_network
+    env_file:
+      - ../services/trade_producer/live.prod.env
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: ["python","-m", "app.main"]
+
+
+networks:
+    redpanda_network:
+      external: true
+      name: redpanda_network

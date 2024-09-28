@@ -67,7 +67,8 @@ class TradesProducer:
 				value=serialized_trade.value,
 				key=serialized_trade.key,
 			)
-			logger.debug(f"Pushed trade to Kafka: {trade}")
+			# logger.debug(f"Pushed trade to Kafka: {trade}")
+			print(f"Pushed trade to Kafka: {trade}", flush=True, end="\r")
 
 	def close(self) -> None:
 		self.producer.flush()
