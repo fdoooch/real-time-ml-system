@@ -47,6 +47,15 @@ def topic_to_feature_store(
         while True:
             msg = consumer.poll(timeout=1.0)
             if msg is None:
+                if len(batch) > 0:
+                    logger.debug(f'Batch has size {len(batch)} > 0... Pushing data to Feature Store by Timeout')
+                    push_feature_to_feature_group(
+                        value=batch,
+                        feature_group=feature_group,
+                        start_offline_materialization=start_offline_materialization,
+                    )
+                    batch = []
+                    time.sleep(pause_between_pushing)
                 continue
             if msg.error():
                 logger.error(f"Kafka error: {msg.error()}")
@@ -56,7 +65,7 @@ def topic_to_feature_store(
             batch.append(features)
 
             if len(batch) < batch_size:
-                logger.debug(f'Batch has size {len(batch)} < {batch_size:,}...')
+                print(f'Batch has size {len(batch)} < {batch_size:,}...', end='\r')
                 continue
 
             logger.debug(f'Batch has size {len(batch)} >= {batch_size:,}... Pushing data to Feature Store')
@@ -68,15 +77,6 @@ def topic_to_feature_store(
 
             batch = []
             time.sleep(pause_between_pushing)
-            
-                
-            # push_feature_to_feature_store(
-            #     options=feature_group_options,
-            #     creds=feature_group_creds,
-            #     feature=feature,
-            #     start_offline_materialization=start_offline_materialization,
-            # )
-            # Storing offset only after the message is processed enables at-least-once processing
             consumer.store_offsets(message=msg)
 
 
