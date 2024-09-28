@@ -19,7 +19,6 @@ services:
         max-file: "3"
     command: ["python","-m", "app.main"]
 
-
   trades-to-ohlcv:
     build: 
       context: ../services/trade_to_ohlcv
@@ -33,12 +32,13 @@ services:
       - redpanda_network
     env_file:
       - ../services/trade_to_ohlcv/.env.live.prod
+    depends_on:
+      - trades-producer
     logging:
       options:
         max-size: "10m"
         max-file: "3"
     command: ["python","-m", "app.main"]
-
 
   topic-to-feature-store:
     build: 
@@ -53,12 +53,13 @@ services:
       - redpanda_network
     env_file:
       - ../services/topic_to_feature_store/.env.live.prod
+    depends_on:
+      - trades-to-ohlcv
     logging:
       options:
         max-size: "10m"
         max-file: "3"
     command: ["python","-m", "app.main"]
-
 
 networks:
     redpanda_network:
