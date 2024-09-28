@@ -9,3 +9,13 @@ start-feature-live-pipeline:
 
 stop-feature-live-pipeline:
 	docker compose -f feature_live_pipeline.yml down
+
+
+logs-trades-producer-live:
+	docker logs trades-producer -f
+
+logs-trades-to-ohlcv-live:
+	docker logs trades-to-ohlcv -f
+
+logs-feature-live-pipeline:
+	docker logs feature-live-pipeline -f
