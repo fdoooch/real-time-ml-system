@@ -86,7 +86,7 @@ def main():
         version=settings.hopsworks.FEATURE_GROUP_VERSION,
         primary_key=settings.hopsworks.FEATURE_GROUP_PRIMARY_KEY,
         event_time=settings.hopsworks.FEATURE_GROUP_EVENT_TIME,
-        online_enabled=True,
+        online_enabled=settings.hopsworks.FEATURE_GROUP_ONLINE_ENABLED,
         creds=feature_group_creds,
     )
     topic_to_feature_store(
