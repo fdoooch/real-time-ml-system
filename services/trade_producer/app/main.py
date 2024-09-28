@@ -16,6 +16,9 @@ from app.trades_connectors import (
 logger = structlog.getLogger(settings.LOGGER_NAME)
 
 
+
+
+
 class TradesProducer:
 	sources = [TradesConnector]
 

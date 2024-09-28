@@ -3,6 +3,8 @@ from datetime import timedelta
 import structlog
 from quixstreams import Application
 
+from dataclasses import dataclass
+
 from app.config import settings
 
 # TODO: make kline open price as the last price of previous kline
@@ -10,6 +12,14 @@ from app.config import settings
 
 logger = structlog.get_logger(settings.LOGGER_NAME)
 
+
+@dataclass
+class KafkaOptions:
+	broker_address: str
+	input_topic: str
+	output_topic: str | None
+	consumer_group: str
+	auto_offset_reset: str
 
 def _custom_ts_extractor(
 		trade: dict,
@@ -20,16 +30,11 @@ def _custom_ts_extractor(
 	"""
 	Specifying a custom timestamp extractor to use the timestamp from trade-messages instead of kafka timestamp
 	"""
-	logger.debug(f"timestamp_type: {timestamp_type}, ({type(timestamp_type)})")
 	return trade["timestamp_ms"]
 
 
 def trade_to_ohlcv(
-	kafka_broker_address: str,
-	kafka_input_topic: str,
-	kafka_output_topic: str,
-	kafka_consumer_group: str,
-	kafka_auto_offset_reset: str,
+	kafka: KafkaOptions,
 	ohlcv_window_seconds: int,
 ) -> None:
 	"""
@@ -47,14 +52,14 @@ def trade_to_ohlcv(
 	    None
 	"""
 	app = Application(
-		broker_address=kafka_broker_address,
-		consumer_group=kafka_consumer_group,  # In case we have multiple parallel trade-to-ohlcv jobs
-		auto_offset_reset=kafka_auto_offset_reset,
+		broker_address=kafka.broker_address,
+		consumer_group=kafka.consumer_group,  # In case we have multiple parallel trade-to-ohlcv jobs
+		auto_offset_reset=kafka.auto_offset_reset,
 	)
 
 
-	input_topic = app.topic(kafka_input_topic, value_serializer="json", timestamp_extractor=_custom_ts_extractor)
-	output_topic = app.topic(kafka_output_topic, value_serializer="json")
+	input_topic = app.topic(kafka.input_topic, value_serializer="json", timestamp_extractor=_custom_ts_extractor)
+	output_topic = app.topic(kafka.output_topic, value_serializer="json")
 
 	# create a streaming dataframe
 	# to apply transformations to data
@@ -120,11 +125,14 @@ def _update_ohlcv_candle(kline: dict, trade: dict) -> dict:
 
 if __name__ == "__main__":
 	logger.info("Starting trade_to_ohlcv")
+	kafka_options = KafkaOptions(
+		broker_address=settings.kafka.BROKER_ADDRESS,
+		input_topic=settings.kafka.TRADES_TOPIC,
+		output_topic=settings.kafka.OHLCV_TOPIC,
+		consumer_group=settings.kafka.CONSUMER_GROUP,
+		auto_offset_reset=settings.kafka.AUTO_OFFSET_RESET,
+	)
 	trade_to_ohlcv(
-		kafka_broker_address=settings.kafka.BROKER_ADDRESS,
-		kafka_input_topic=settings.kafka.TRADES_TOPIC,
-		kafka_output_topic=settings.kafka.OHLCV_TOPIC,
-		kafka_consumer_group=settings.kafka.CONSUMER_GROUP,
-		kafka_auto_offset_reset=settings.kafka.AUTO_OFFSET_RESET,
+		kafka=kafka_options,
 		ohlcv_window_seconds=settings.OHLCV_WINDOW_SECONDS,
 	)
