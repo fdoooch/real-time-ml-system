@@ -48,13 +48,13 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 		        :param end_unix_epoch_ms: The end timestamp in Unix epoch in milliseconds.
 		"""
 		self._is_active = True
-		logger.debug(f"symbols before spliting: {symbols}")
+		# logger.debug(f"symbols before spliting: {symbols}")
 		symbols = [f"{symbol.split('USDT')[0]}/USDT" for symbol in symbols]
 
-		logger.debug(f"symbols after spliting: {symbols}")
+		# logger.debug(f"symbols after spliting: {symbols}")
 
 		for symbol in symbols:
-			logger.debug(f"Downloading trades for {symbol} from {historical_start_ms} to {historical_end_ms}...")
+			logger.info(f"Downloading trades for {symbol} from {historical_start_ms} to {historical_end_ms}...")
 			self._push_symbol_trades_to_callback(
 				symbol=symbol,
 				callback=callback,
