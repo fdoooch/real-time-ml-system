@@ -9,6 +9,7 @@ from app.hopsworks_api import (
 
 from quixstreams import Application
 import json
+import time
 import logging
 
 logger = logging.getLogger(settings.LOGGER_NAME)
@@ -21,6 +22,7 @@ def topic_to_feature_store(
     feature_group_options: FeatureGroupOptions,
     start_offline_materialization: bool,
     batch_size: int,
+    pause_between_pushing: int = 0,
 ) -> None:
     """
     Push feature from kafka to Hopsworks
@@ -65,6 +67,9 @@ def topic_to_feature_store(
             )
 
             batch = []
+            time.sleep(pause_between_pushing)
+            
+                
             # push_feature_to_feature_store(
             #     options=feature_group_options,
             #     creds=feature_group_creds,
@@ -95,7 +100,8 @@ def main():
         kafka_consumer_group=settings.kafka.CONSUMER_GROUP,
         feature_group_options=feature_group_options,
         start_offline_materialization=settings.hopsworks.START_OFFLINE_MATERIALIZATION,
-        batch_size=settings.hopsworks.PUSHING_BATCH_SIZE
+        batch_size=settings.hopsworks.PUSHING_BATCH_SIZE,
+        pause_between_pushing=settings.hopsworks.PAUSE_BETWEEN_PUSHING,
     )
 
 

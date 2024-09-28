@@ -29,7 +29,8 @@ class HopsworksSettings(BaseModel):
     FEATURE_GROUP_PRIMARY_KEY: list[str] = os.getenv("FEATURE_GROUP_PRIMARY_KEYS", "symbol,timestamp_ms").split(",")
     FEATURE_GROUP_EVENT_TIME: str = os.getenv("FEATURE_GROUP_EVENT_TIME", "timestamp_ms")
     FEATURE_GROUP_ONLINE_ENABLED: bool = os.getenv("FEATURE_GROUP_ONLINE_ENABLED", True)
-    PUSHING_BATCH_SIZE: int = int(os.getenv("FEATURE_GROUP_PUSHING_BATCH_SIZE", 10))
+    PUSHING_BATCH_SIZE: int = int(os.getenv("FEATURE_GROUP_PUSHING_BATCH_SIZE", 1))
+    PAUSE_BETWEEN_PUSHING: int = int(os.getenv("FEATURE_GROUP_PAUSE_BETWEEN_PUSHING", 0))
     START_OFFLINE_MATERIALIZATION: bool = os.getenv("FEATURE_GROUP_START_OFFLINE_MATERIALIZATION", False)
 
 class Settings(BaseSettings):
