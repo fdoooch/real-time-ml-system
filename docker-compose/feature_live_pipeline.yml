@@ -40,6 +40,26 @@ services:
     command: ["python","-m", "app.main"]
 
 
+  topic-to-feature-store:
+    build: 
+      context: ../services/topic_to_feature_store
+      dockerfile: Dockerfile
+    container_name: topic-to-feature-store
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - "../services/topic_to_feature_store/app:/code/app"
+    networks:
+      - redpanda_network
+    env_file:
+      - ../services/topic_to_feature_store/.env.live.prod
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: ["python","-m", "app.main"]
+
+
 networks:
     redpanda_network:
       external: true
