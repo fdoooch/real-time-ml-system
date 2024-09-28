@@ -1,18 +1,18 @@
-name: feature-pipeline
+name: backfill-pipeline
 services:
   trades-producer:
     build: 
       context: ../services/trade_producer
       dockerfile: Dockerfile
     container_name: trades-producer
-    restart: unless-stopped
+    restart: on-failure
     tty: true
     volumes:
       - "../services/trade_producer/app:/code/app"
     networks:
       - redpanda_network
     env_file:
-      - ../services/trade_producer/.env.live.prod
+      - ../services/trade_producer/.env.historical.prod
     logging:
       options:
         max-size: "10m"
@@ -25,14 +25,14 @@ services:
       context: ../services/trade_to_ohlcv
       dockerfile: Dockerfile
     container_name: trades-to-ohlcv
-    restart: unless-stopped
+    restart: on-failure
     tty: true
     volumes:
       - "../services/trade_to_ohlcv/app:/code/app"
     networks:
       - redpanda_network
     env_file:
-      - ../services/trade_to_ohlcv/.env.live.prod
+      - ../services/trade_to_ohlcv/.env.historical.prod
     logging:
       options:
         max-size: "10m"
@@ -45,14 +45,14 @@ services:
       context: ../services/topic_to_feature_store
       dockerfile: Dockerfile
     container_name: topic-to-feature-store
-    restart: unless-stopped
+    restart: on-failure
     tty: true
     volumes:
       - "../services/topic_to_feature_store/app:/code/app"
     networks:
       - redpanda_network
     env_file:
-      - ../services/topic_to_feature_store/.env.live.prod
+      - ../services/topic_to_feature_store/.env.historical.prod
     logging:
       options:
         max-size: "10m"

@@ -35,6 +35,7 @@ def get_or_create_feature_group(
         name=options.name,
         version=options.version,
         primary_key=options.primary_key,
+        event_time=options.event_time,
         online_enabled=options.online_enabled,
         # expectation_suite=...
     )
