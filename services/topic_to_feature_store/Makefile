@@ -3,8 +3,8 @@ IMAGE_NAME := trade_to_ohlcv
 DEV_ENV_FILE := .env.live.dev
 PROD_ENV_FILE := .env.live.prod
 HISTORICAL_PROD_ENV_FILE := .env.historical.prod
-LIVE_CONTAINER_NAME := trade-to-ohlcv
-HISTORICAL_CONTAINER_NAME := trade-to-ohlcv-historical
+LIVE_CONTAINER_NAME := topic-to-feature-store
+HISTORICAL_CONTAINER_NAME := topic-to-feature-store-historical
 
 # Phony targets
 .PHONY: run-live-dev run-live-prod run-historical-prod build rebuild logs logs-historical lint format clean
