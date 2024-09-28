@@ -1,5 +1,5 @@
 # Variables
-IMAGE_NAME := trade_to_ohlcv
+IMAGE_NAME := topic_to_feature_store
 DEV_ENV_FILE := .env.live.dev
 PROD_ENV_FILE := .env.live.prod
 HISTORICAL_PROD_ENV_FILE := .env.historical.prod
