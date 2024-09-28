@@ -84,8 +84,8 @@ def main():
     feature_group_options = FeatureGroupOptions(
         name=settings.hopsworks.FEATURE_GROUP_NAME,
         version=settings.hopsworks.FEATURE_GROUP_VERSION,
-        primary_key=["timestamp", "symbol"],
-        event_time="timestamp",
+        primary_key=settings.hopsworks.FEATURE_GROUP_PRIMARY_KEY,
+        event_time=settings.hopsworks.FEATURE_GROUP_EVENT_TIME,
         online_enabled=True,
         creds=feature_group_creds,
     )
