@@ -12,7 +12,7 @@ services:
     networks:
       - redpanda_network
     env_file:
-      - ../services/trade_producer/live.prod.env
+      - ../services/trade_producer/.env.live.prod
     logging:
       options:
         max-size: "10m"
