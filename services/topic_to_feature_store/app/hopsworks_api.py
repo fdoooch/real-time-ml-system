@@ -37,6 +37,7 @@ def get_or_create_feature_group(
         primary_key=options.primary_key,
         event_time=options.event_time,
         online_enabled=options.online_enabled,
+        stream=True,
         # expectation_suite=...
     )
         
@@ -56,6 +57,8 @@ def push_feature_to_feature_group(
         features=value_df,
         write_options={
             "start_offline_materialization": start_offline_materialization,
+            "wait_for_job": False,
+            "save_code": False,
         },
     )
     # print("✔️ Done")
