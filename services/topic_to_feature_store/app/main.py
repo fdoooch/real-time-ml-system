@@ -52,7 +52,7 @@ def topic_to_feature_store(
         consumer.subscribe(topics=[kafka_options.input_topic])
 
         while True:
-            msg = consumer.poll(timeout=120.0)
+            msg = consumer.poll(timeout=300.0)
             if msg is None:
                 if len(batch) > 0:
                     logger.debug(f'Batch has size {len(batch)} > 0... Pushing data to Feature Store by Timeout')
@@ -63,7 +63,10 @@ def topic_to_feature_store(
                     )
                     batch = []
                     time.sleep(pause_between_pushing)
-                continue
+                    continue
+                else:
+                    logger.info("No data received from Kafka. Exiting...")
+                    break
             if msg.error():
                 logger.error(f"Kafka error: {msg.error()}")
                 continue
