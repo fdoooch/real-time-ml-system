@@ -52,7 +52,7 @@ def topic_to_feature_store(
         consumer.subscribe(topics=[kafka_options.input_topic])
 
         while True:
-            msg = consumer.poll(timeout=1.0)
+            msg = consumer.poll(timeout=120.0)
             if msg is None:
                 if len(batch) > 0:
                     logger.debug(f'Batch has size {len(batch)} > 0... Pushing data to Feature Store by Timeout')
