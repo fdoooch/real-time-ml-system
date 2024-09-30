@@ -37,7 +37,6 @@ class BybitSpotTradesConnector(TradesConnector):
 		historical_end_ms: int | None = None,
 	) -> None:
 		
-		symbols = [symbol.replace("/", "") for symbol in symbols]
 		"""
 		Establishes a connection to the Bybit websocket API
 		"""
@@ -60,7 +59,7 @@ class BybitSpotTradesConnector(TradesConnector):
 		trades = []
 		for item in msg.get("data"):
 			logger.debug(item)
-			symbol = adjust_symbol(item.get("s"))
+			symbol = item.get("s")
 			trade = Trade(
 				symbol=symbol,
 				price=item.get("p"),
@@ -69,9 +68,3 @@ class BybitSpotTradesConnector(TradesConnector):
 			)
 			trades.append(trade)
 		self.callback_handler(trades)
-
-
-
-def adjust_symbol(symbol: str) -> str:
-	if symbol[-4:] == "USDT":
-		return f"{symbol[:-4]}/USDT"

@@ -50,7 +50,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 		self._is_active = True
 		# logger.debug(f"symbols before spliting: {symbols}")
 		# symbols = [f"{symbol.split('USDT')[0]}/USDT" for symbol in symbols]
-		symbols = [symbol.replace("/", "") for symbol in symbols]
+		# symbols = [symbol.replace("/", "") for symbol in symbols]
 
 		# logger.debug(f"symbols after spliting: {symbols}")
 
@@ -160,7 +160,7 @@ def test():
 	since_ns = since_ms * 1_000_000
 	end_ms = int(datetime.datetime.now().timestamp() * 1000)
 	end_ns = end_ms * 1_000_000
-	symbol = "BTC/USDT"
+	symbol = "BTCUSDT"
 
 	print(f"since_ms: {since_ms}")
 	print(f"since_ns: {since_ns}")

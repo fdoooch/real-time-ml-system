@@ -62,6 +62,8 @@ class KrakenTradesConnector(TradesConnector):
 
 	def _extract_trades_from_websocket_message(self, msg_json: dict) -> list[Trade]:
 		trades = []
+
+		logger.debug(msg_json)
 		for item in msg_json.get("data"):
 			trade = Trade(
 				# symbol=item.get("symbol").replace("/", ""),
