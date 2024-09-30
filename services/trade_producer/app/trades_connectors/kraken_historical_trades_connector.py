@@ -98,7 +98,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 					)
 					breakpoint()
 				if trades:
-					print(trades[-1])
+					# print(trades[-1])
 					callback(trades)
 					since_ns = trades[-1].timestamp_ms * 1_000_000 + 1
 					# logger.debug(
@@ -121,7 +121,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 		response.raise_for_status()
 		data = response.json()
 
-		logger.debug(data)
+		# logger.debug(data)
 
 		if ("error" in data) and ("EGeneral:Too many requests" in data["error"]):
 			raise TooManyRequestsToTradesSourceError(
