@@ -64,7 +64,8 @@ class KrakenTradesConnector(TradesConnector):
 		trades = []
 		for item in msg_json.get("data"):
 			trade = Trade(
-				symbol=item.get("symbol").replace("/", ""),
+				# symbol=item.get("symbol").replace("/", ""),
+				symbol=item.get("symbol"),
 				price=item.get("price"),
 				qty=item.get("qty"),
 				timestamp_ms=convert_datetime_to_timestamp_in_ms(item.get("timestamp")),
@@ -76,8 +77,8 @@ class KrakenTradesConnector(TradesConnector):
 		self,
 		symbols: list[str],
 		callback: Callable = None,
-		start_unix_epoch_ms: int | None = None,
-		end_unix_epoch_ms: int | None = None,
+		historical_start_ms: int | None = None,
+		historical_end_ms: int | None = None,
 	) -> None:
 		"""
 		Subscribes to trades for the specified symbols and calls the callback with received messages.

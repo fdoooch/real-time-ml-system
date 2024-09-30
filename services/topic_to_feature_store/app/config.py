@@ -21,8 +21,6 @@ class KafkaSettings(BaseModel):
 
 
 class HopsworksSettings(BaseModel):
-    USERNAME: str = os.getenv("HOPSWORKS_USERNAME", "admin")
-    PASSWORD: str = os.getenv("HOPSWORKS_PASSWORD", "admin")
     API_KEY: str = os.getenv("HOPSWORKS_API_KEY")
     PROJECT_NAME: str = os.getenv("HOPSWORKS_PROJECT_NAME")
     FEATURE_GROUP_NAME: str = os.getenv("FEATURE_GROUP_NAME", "ohlcv")
