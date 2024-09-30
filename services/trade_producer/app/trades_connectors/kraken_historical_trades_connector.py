@@ -115,15 +115,23 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 		http_session: httpx.Client,
 	) -> list[Trade]:
 		url = f"{self.API_URL}?pair={symbol}&since={since_ns}"
+		logger.debug(f"URL: {url}")
 
 		response = http_session.get(url)
 		response.raise_for_status()
 		data = response.json()
 
+		logger.debug(data)
+
 		if ("error" in data) and ("EGeneral:Too many requests" in data["error"]):
 			raise TooManyRequestsToTradesSourceError(
 				"Too many requests to Kraken API trades source."
 			)
+		if symbol == "BTCUSDT":
+			# Krakens symbol for BTCUSDT
+			response_symbol = "XBTUSDT"
+		else:
+			response_symbol = symbol
 
 		trades = [
 			Trade(
@@ -132,7 +140,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 				qty=trade[1],
 				timestamp_ms=int(trade[2] * 1000),
 			)
-			for trade in data["result"][symbol]
+			for trade in data["result"][response_symbol]
 			if (int(trade[2] * 1_000_000_000) < end_ns)
 			and (int(trade[2] * 1_000) * 1_000_000 >= since_ns)
 		]
@@ -146,20 +154,22 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 
 
 def test():
-	since_ms = (
+	since_ms = int((
 		datetime.datetime.now() - datetime.timedelta(minutes=30)
-	).timestamp() * 1000
+	).timestamp() * 1000)
 	since_ns = since_ms * 1_000_000
-	end_ms = datetime.datetime.now().timestamp() * 1000
+	end_ms = int(datetime.datetime.now().timestamp() * 1000)
 	end_ns = end_ms * 1_000_000
+	symbol = "BTC/USDT"
 
 	print(f"since_ms: {since_ms}")
 	print(f"since_ns: {since_ns}")
 	print(f"end_ms: {end_ms}")
 	print(f"end_ns: {end_ns}")
+
 	with httpx.Client() as client:
 		trades = KrakenHistoricalTradesConnector()._get_trades(
-			"BTC/USDT", since_ns, end_ns, client
+			symbol.replace("/", ""), since_ns, end_ns, client
 		)
 		print(f"trades: {trades}")
 
