@@ -50,6 +50,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 		self._is_active = True
 		# logger.debug(f"symbols before spliting: {symbols}")
 		# symbols = [f"{symbol.split('USDT')[0]}/USDT" for symbol in symbols]
+		symbols = [symbol.replace("/", "") for symbol in symbols]
 
 		# logger.debug(f"symbols after spliting: {symbols}")
 
@@ -97,6 +98,7 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 					)
 					breakpoint()
 				if trades:
+					print(trades[-1])
 					callback(trades)
 					since_ns = trades[-1].timestamp_ms * 1_000_000 + 1
 					# logger.debug(
