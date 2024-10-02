@@ -120,4 +120,9 @@ def main():
 
 
 if __name__ == "__main__":
+    import hsfs
+
+    logger.info("Starting application")
+    logger.debug(f"HSFS version: {hsfs.__version__}")
+
     main()
