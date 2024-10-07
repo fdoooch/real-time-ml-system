@@ -1048,12 +1048,12 @@ docs = ["keras_autodoc @ git+https://git@github.com/moritzmeister/keras-autodoc@
 
 [[package]]
 name = "hsfs"
-version = "3.7.7"
+version = "3.7.8"
 description = "HSFS: An environment independent client to interact with the Hopsworks Featurestore"
 optional = false
 python-versions = "<3.13,>=3.8"
 files = [
-    {file = "hsfs-3.7.7.tar.gz", hash = "sha256:86f38bee90c269f1ce379470af5e24410b9307fc30853607311d6ba4399f3768"},
+    {file = "hsfs-3.7.8.tar.gz", hash = "sha256:05c37f333ba55c1ff59ad108f5d5903d048678dbba27d625db3e996eb3b45399"},
 ]
 
 [package.dependencies]
@@ -2916,16 +2916,16 @@ cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 
 [[package]]
 name = "quixstreams"
-version = "2.11.0"
+version = "2.11.1"
 description = "Python library for building stream processing applications with Apache Kafka"
 optional = false
 python-versions = "<4,>=3.8"
 files = [
-    {file = "quixstreams-2.11.0-py3-none-any.whl", hash = "sha256:a3ec70ea2e8f7f582830de94f883007f2ed4dd002ea5d3ff9aab97332a3d60ca"},
+    {file = "quixstreams-2.11.1-py3-none-any.whl", hash = "sha256:93a1d696b4f6494aaa772bbcddcb92e3a266997c1bdb3a0455f8970b12654a16"},
 ]
 
 [package.dependencies]
-confluent-kafka = ">=2.2,<2.6"
+confluent-kafka = ">=2.2,<2.5"
 jsonschema = ">=4.3.0"
 orjson = ">=3.9,<4"
 pydantic = ">=2.7,<2.10"

@@ -115,7 +115,6 @@ class KrakenHistoricalTradesConnector(TradesConnector):
 		http_session: httpx.Client,
 	) -> list[Trade]:
 		url = f"{self.API_URL}?pair={symbol}&since={since_ns}"
-		logger.debug(f"URL: {url}")
 
 		response = http_session.get(url)
 		response.raise_for_status()
