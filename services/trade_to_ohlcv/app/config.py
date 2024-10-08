@@ -14,19 +14,19 @@ print(f"Loading .env from {DOTENV_PATH}")
 def get_kafka_trades_topic_name() -> str:
 	env_topic = os.getenv("KAFKA_TRADES_TOPIC")
 	if "historical" in env_topic:
-		return f"{env_topic}_{os.getenv("BACKFILL_JOB_ID")}"
+		return f"{env_topic}_{os.getenv('BACKFILL_JOB_ID')}"
 	return env_topic
 
 def get_kafka_ohlcv_topic_name() -> str:
 	env_topic = os.getenv("KAFKA_OHLCV_TOPIC")
 	if "historical" in env_topic:
-		return f"{env_topic}_{os.getenv("BACKFILL_JOB_ID")}"
+		return f"{env_topic}_{os.getenv('BACKFILL_JOB_ID')}"
 	return env_topic
 
 def get_kafka_consumer_group_name() -> str:
 	env_group = os.getenv("KAFKA_CONSUMER_GROUP")
 	if "historical" in env_group:
-		return f"{env_group}_{os.getenv("BACKFILL_JOB_ID")}"
+		return f"{env_group}_{os.getenv('BACKFILL_JOB_ID')}"
 	return env_group
 
 

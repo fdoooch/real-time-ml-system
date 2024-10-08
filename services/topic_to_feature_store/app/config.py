@@ -10,19 +10,18 @@ from pydantic_settings import BaseSettings
 BASE_DIR = Path(__file__).resolve().parent.parent
 DOTENV_PATH = os.path.join(BASE_DIR, ".env.topic_to_feature_store")
 load_dotenv(f"{DOTENV_PATH}")
-print(f"Loading .env from {DOTENV_PATH}")
 
 
 def get_kafka_ohlcv_topic_name() -> str:
 	env_topic = os.getenv("KAFKA_OHLCV_TOPIC")
 	if "historical" in env_topic:
-		return f"{env_topic}_{os.getenv("BACKFILL_JOB_ID")}"
+		return f"{env_topic}_{os.getenv('BACKFILL_JOB_ID')}"
 	return env_topic
 
 def get_kafka_consumer_group_name() -> str:
 	env_group = os.getenv("KAFKA_CONSUMER_GROUP")
 	if "historical" in env_group:
-		return f"{env_group}_{os.getenv("BACKFILL_JOB_ID")}"
+		return f"{env_group}_{os.getenv('BACKFILL_JOB_ID')}"
 	return env_group
 
 
