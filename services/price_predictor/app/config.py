@@ -45,8 +45,10 @@ class Settings(BaseSettings):
     BASE_DIR: Path = BASE_DIR
     kafka: KafkaSettings = KafkaSettings()
     hopsworks: HopsworksSettings = HopsworksSettings()
-    LOGGER_NAME: str = "topic_to_feature_store"
+    LOGGER_NAME: str = "price_predictor"
     SYMBOL: str = os.getenv("SYMBOL", "BTCUSDT")
+    FORECAST_STEPS: int = int(os.getenv("FORECAST_STEPS", 5))
+    PERCENTAGE_TEST_DATA: float = float(os.getenv("PERCENTAGE_TEST_DATA", 0.3))
 
 
 settings = Settings()

@@ -9,6 +9,7 @@ readme = "README.md"
 python = ">=3.11,<3.13"
 pydantic-settings = "^2.5.2"
 hopsworks = "^3.7.0"
+scikit-learn = "^1.5.2"
 
 
 [build-system]

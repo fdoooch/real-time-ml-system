@@ -5,7 +5,14 @@ from .ohlcv_features_reader import (
     get_feature_store,
     get_feature_view,
 )
+from app.models.current_price_baseline import CurrentPriceBaseline
+
+from sklearn.metrics import mean_absolute_error
 from datetime import datetime as dt
+import logging
+
+
+logger = logging.getLogger(settings.LOGGER_NAME)
 
 def train_model(
     hopsworks_creds: FeatureGroupCreds,
@@ -15,6 +22,8 @@ def train_model(
     ohlcv_window_size_sec: int,
     start_unix_timestamp: int,
     end_unix_timestamp: int,
+    forecast_steps: int,
+    percentage_test_data: float = 0.3
 ):
     """
     Reads features from the feature store
@@ -35,8 +44,55 @@ def train_model(
          start_time=start_unix_timestamp,
          end_time=end_unix_timestamp
     )
-    print(f"Features: {features}")
-    # Build the model
+
+    test_size = int(len(features) * percentage_test_data)
+    # Calculate the effective test size, accounting for forecast steps
+    effective_test_size = test_size + forecast_steps
+
+    # Split the data, ensuring no overlap
+    train_df = features.iloc[:-effective_test_size].copy()
+    test_df = features.iloc[-test_size:].copy()
+
+    # Add target column with what we want to predict
+    train_df.loc[:, "target_price"] = train_df["close"].shift(-forecast_steps)
+    test_df.loc[:, "target_price"] = test_df["close"].shift(-forecast_steps)
+
+    # Remove rows with NaN targets
+    train_df = train_df.dropna()
+    test_df = test_df.dropna()
+
+    logger.info(f"Train size: {len(train_df)}")
+    logger.info(f"Test size: {len(test_df)}")
+
+    # split the data into features (X) and target (y)
+    X_train = train_df.drop(columns=["target_price"])
+    y_train = train_df["target_price"]
+    X_test = test_df.drop(columns=["target_price"])
+    y_test = test_df["target_price"]
+
+    # log dimensions of the features and targets
+    logger.info(f"X_train shape: {X_train.shape}")
+    logger.info(f"y_train shape: {y_train.shape}")
+    logger.info(f"X_test shape: {X_test.shape}")
+    logger.info(f"y_test shape: {y_test.shape}")
+    breakpoint()
+
+    # Build the model'
+    model = CurrentPriceBaseline()
+    model.fit(X_train, y_train)
+
+    # Evaluate the model
+    y_pred = model.predict(X_test)
+    logger.info(f"y_pred shape: {y_pred.shape}")
+
+    # log first 10 predicted values
+    logger.info(f"y_pred: {y_pred[:10]}")
+    # log first 10 actual values
+    logger.info(f"y_test: {y_test[:10]}") 
+
+    mae = mean_absolute_error(y_test, y_pred)
+    logger.info(f"MAE: {mae}")
+
 
     # Push model to the model registry
     ...
@@ -76,4 +132,6 @@ if __name__ == "__main__":
         ohlcv_window_size_sec=settings.hopsworks.OHLCV_WINDOW_SIZE_SEC,
         start_unix_timestamp=historical_start_ms,
         end_unix_timestamp=historical_end_ms,
+        forecast_steps=settings.FORECAST_STEPS,
+        percentage_test_data=settings.PERCENTAGE_TEST_DATA
     )
