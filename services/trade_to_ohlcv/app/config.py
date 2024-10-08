@@ -11,15 +11,34 @@ DOTENV_PATH = os.path.join(BASE_DIR, ".env.trades_to_ohlcv")
 load_dotenv(f"{DOTENV_PATH}")
 print(f"Loading .env from {DOTENV_PATH}")
 
+def get_kafka_trades_topic_name() -> str:
+	env_topic = os.getenv("KAFKA_TRADES_TOPIC")
+	if "historical" in env_topic:
+		return f"{env_topic}_{os.getenv("BACKFILL_JOB_ID")}"
+	return env_topic
+
+def get_kafka_ohlcv_topic_name() -> str:
+	env_topic = os.getenv("KAFKA_OHLCV_TOPIC")
+	if "historical" in env_topic:
+		return f"{env_topic}_{os.getenv("BACKFILL_JOB_ID")}"
+	return env_topic
+
+def get_kafka_consumer_group_name() -> str:
+	env_group = os.getenv("KAFKA_CONSUMER_GROUP")
+	if "historical" in env_group:
+		return f"{env_group}_{os.getenv("BACKFILL_JOB_ID")}"
+	return env_group
+
+
 
 class KafkaSettings(BaseModel):
 	BROKER_ADDRESS: str = os.getenv("KAFKA_BROKER_ADDRESS", "localhost:19092")
 	AUTO_OFFSET_RESET: str = os.getenv(
 		"KAFKA_AUTO_OFFSET_RESET", "latest"
 	)  # earliest, latest, error
-	TRADES_TOPIC: str = os.getenv("KAFKA_TRADES_TOPIC", "trade")
-	OHLCV_TOPIC: str = os.getenv("KAFKA_OHLCV_TOPIC", "ohlcv")
-	CONSUMER_GROUP: str = os.getenv("KAFKA_CONSUMER_GROUP", "trades_to_ohlcv")
+	TRADES_TOPIC: str = get_kafka_trades_topic_name()
+	OHLCV_TOPIC: str = get_kafka_ohlcv_topic_name()
+	CONSUMER_GROUP: str = get_kafka_consumer_group_name()
 
 
 class Settings(BaseSettings):

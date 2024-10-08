@@ -13,6 +13,8 @@ services:
       - redpanda_network
     env_file:
       - ../services/trade_producer/.env.historical.prod
+    environment:
+      - BACKFILL_JOB_ID=${BACKFILL_JOB_ID}
     logging:
       options:
         max-size: "10m"
@@ -33,6 +35,8 @@ services:
       - redpanda_network
     env_file:
       - ../services/trade_to_ohlcv/.env.historical.prod
+    environment:
+      - BACKFILL_JOB_ID=${BACKFILL_JOB_ID}
     depends_on:
       - trades-producer-historical
     logging:
@@ -54,6 +58,8 @@ services:
       - redpanda_network
     env_file:
       - ../services/topic_to_feature_store/.env.historical.prod
+    environment:
+      - BACKFILL_JOB_ID=${BACKFILL_JOB_ID}
     depends_on:
       - trades-to-ohlcv-historical
     logging:

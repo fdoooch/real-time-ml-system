@@ -11,12 +11,18 @@ from app.enums import TradeSourceName
 BASE_DIR = Path(__file__).resolve().parent.parent
 DOTENV_PATH = os.path.join(BASE_DIR, ".env")
 load_dotenv(f"{DOTENV_PATH}")
-print(f"Loading .env from {DOTENV_PATH}")
+
+
+def get_kafka_trades_topic_name() -> str:
+	env_topic = os.getenv("KAFKA_TRADES_TOPIC")
+	if "historical" in env_topic:
+		return f"{env_topic}_{os.getenv("BACKFILL_JOB_ID")}"
+	return env_topic
 
 
 class KafkaSettings(BaseModel):
 	BROKER_ADDRESS: str = os.getenv("KAFKA_BROKER_ADDRESS", "localhost:19092")
-	TRADES_TOPIC: str = os.getenv("KAFKA_TRADES_TOPIC", "trades")
+	TRADES_TOPIC: str = get_kafka_trades_topic_name()
 
 
 class TradesSourceSettings(BaseModel):
