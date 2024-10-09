@@ -32,10 +32,10 @@ stop-backfill-pipeline:
 
 delete-redpanda-resources:
 	@which rpk > /dev/null || (echo "Error: 'rpk' command not found. Please install it or add it to your PATH." && exit 1)
-	rpk topic delete trade_historical_$(BACKFILL_JOB_ID) -- brokers redpanda-0:9092 || true
-	rpk topic delete ohlcv_historical_$(BACKFILL_JOB_ID) -- brokers redpanda-0:9092 || true
-	rpk group delete trade_to_ohlcv_historical_$(BACKFILL_JOB_ID) -- brokers redpanda-0:9092 || true
-	rpk group delete ohlcv_historical_to_feature_store_$(BACKFILL_JOB_ID) -- brokers redpanda-0:9092 || true
+	rpk topic delete trade_historical_$(BACKFILL_JOB_ID) --brokers redpanda-0:9092 || true
+	rpk topic delete ohlcv_historical_$(BACKFILL_JOB_ID) --brokers redpanda-0:9092 || true
+	rpk group delete trade_to_ohlcv_historical_$(BACKFILL_JOB_ID) --brokers redpanda-0:9092 || true
+	rpk group delete ohlcv_historical_to_feature_store_$(BACKFILL_JOB_ID) --brokers redpanda-0:9092 || true
 
 
 logs-trades-producer-live:
