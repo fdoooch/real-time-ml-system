@@ -76,13 +76,13 @@ class TradesProducer:
 
 def get_trades_connector() -> TradesConnector:
 	if settings.trades_source.NAME == TradeSourceName.KRAKEN_SPOT:
-		settings.kafka.TRADES_TOPIC = "trades_kraken_spot"
+		# settings.kafka.TRADES_TOPIC = "trades_kraken_spot"
 		return KrakenTradesConnector()
 	elif settings.trades_source.NAME == TradeSourceName.KRAKEN_SPOT_HISTORICAL:
-		settings.kafka.TRADES_TOPIC = "trades_kraken_spot_historical"
+		# settings.kafka.TRADES_TOPIC = "trades_kraken_spot_historical"
 		return KrakenHistoricalTradesConnector()
 	elif settings.trades_source.NAME == TradeSourceName.BYBIT_SPOT:
-		settings.kafka.TRADES_TOPIC = "trades_bybit_spot"
+		# settings.kafka.TRADES_TOPIC = "trades_bybit_spot"
 		return BybitSpotTradesConnector()
 	raise NotImplementedError
 
