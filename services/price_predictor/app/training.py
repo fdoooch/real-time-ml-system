@@ -7,15 +7,24 @@ from .ohlcv_features_reader import (
 )
 from app.models.current_price_baseline import CurrentPriceBaseline
 
+from comet_ml import Experiment
 from sklearn.metrics import mean_absolute_error
 from datetime import datetime as dt
+from dataclasses import dataclass
 import logging
 
 
 logger = logging.getLogger(settings.LOGGER_NAME)
 
+@dataclass
+class CometMLCreds:
+    api_key: str
+    project_name: str
+
+
 def train_model(
     hopsworks_creds: FeatureGroupCreds,
+    comet_ml_creds: CometMLCreds,
     symbol: str,
     feature_view_name: str,
     feature_view_version: int,
@@ -30,6 +39,23 @@ def train_model(
     Trains a model
     Saves the model to the model registry
     """
+    # Create a Comet ML experiment
+    experiment = Experiment(
+        api_key=comet_ml_creds.api_key,
+        project_name=comet_ml_creds.project_name
+    )
+    experiment.log_parameters(
+        {
+            "symbol": symbol,
+            "feature_view_name": feature_view_name,
+            "feature_view_version": feature_view_version,
+            "ohlcv_window_size_sec": ohlcv_window_size_sec,
+            "start_unix_timestamp": start_unix_timestamp,
+            "end_unix_timestamp": end_unix_timestamp,
+            "forecast_steps": forecast_steps,
+            "percentage_test_data": percentage_test_data
+        }
+    )
 
     # Load data from the Feature Store
     fs = get_feature_store(hopsworks_creds)
@@ -44,6 +70,8 @@ def train_model(
          start_time=start_unix_timestamp,
          end_time=end_unix_timestamp
     )
+    experiment.log_parameter("num_raw_feature_rows", len(features))
+    
 
     test_size = int(len(features) * percentage_test_data)
     # Calculate the effective test size, accounting for forecast steps
@@ -56,10 +84,21 @@ def train_model(
     # Add target column with what we want to predict
     train_df.loc[:, "target_price"] = train_df["close"].shift(-forecast_steps)
     test_df.loc[:, "target_price"] = test_df["close"].shift(-forecast_steps)
-
+    experiment.log_parameters(
+         {
+              "num_train_feature_rows_before_drop_na": len(train_df),
+              "num_test_feature_rows_before_drop_na": len(test_df),
+         }
+    )
     # Remove rows with NaN targets
     train_df = train_df.dropna()
     test_df = test_df.dropna()
+    experiment.log_parameters(
+         {
+              "num_train_feature_rows_after_drop_na": len(train_df),
+              "num_test_feature_rows_after_drop_na": len(test_df),
+         }
+    )
 
     logger.info(f"Train size: {len(train_df)}")
     logger.info(f"Test size: {len(test_df)}")
@@ -75,7 +114,14 @@ def train_model(
     logger.info(f"y_train shape: {y_train.shape}")
     logger.info(f"X_test shape: {X_test.shape}")
     logger.info(f"y_test shape: {y_test.shape}")
-    breakpoint()
+    experiment.log_parameters(
+        {
+            "X_train_shape": X_train.shape,
+            "y_train_shape": y_train.shape,
+            "X_test_shape": X_test.shape,
+            "y_test_shape": y_test.shape
+        }
+    )
 
     # Build the model'
     model = CurrentPriceBaseline()
@@ -92,9 +138,11 @@ def train_model(
 
     mae = mean_absolute_error(y_test, y_pred)
     logger.info(f"MAE: {mae}")
+    experiment.log_metric("mae", mae)
 
 
     # Push model to the model registry
+    experiment.end()
     ...
 
 def convert_str_to_ms(date_str: str) -> int:
@@ -123,9 +171,14 @@ if __name__ == "__main__":
         api_key=settings.hopsworks.API_KEY,
         project_name=settings.hopsworks.PROJECT_NAME
     )
+    comet_ml_creds = CometMLCreds(
+        api_key=settings.cometml.API_KEY,
+        project_name=settings.cometml.PROJECT_NAME
+    )
 
     train_model(
         hopsworks_creds=hopsworks_creds,
+        comet_ml_creds=comet_ml_creds,
         symbol=settings.SYMBOL,
         feature_view_name=settings.hopsworks.FEATURE_VIEW_NAME,
         feature_view_version=settings.hopsworks.FEATURE_VIEW_VERSION,

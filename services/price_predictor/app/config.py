@@ -10,14 +10,11 @@ from pydantic_settings import BaseSettings
 BASE_DIR = Path(__file__).resolve().parent.parent
 DOTENV_PATH = os.path.join(BASE_DIR, ".env")
 load_dotenv(f"{DOTENV_PATH}")
-print(f"Loading .env from {DOTENV_PATH}")
 
 
-class KafkaSettings(BaseModel):
-    BROKER_ADDRESS: str = os.getenv("KAFKA_BROKER_ADDRESS", "localhost:19092")
-    INPUT_TOPIC: str = os.getenv("KAFKA_INPUT_TOPIC", "ohlcv")
-    CONSUMER_GROUP: str = os.getenv("KAFKA_CONSUMER_GROUP", "ohlcv_to_feature_store")
-    AUTO_OFFSET_RESET: str = os.getenv("KAFKA_AUTO_OFFSET_RESET", "latest")
+class CometMLSettings(BaseModel):
+    API_KEY: str = os.getenv("COMET_ML_API_KEY")
+    PROJECT_NAME: str = os.getenv("COMET_ML_PROJECT_NAME")
 
 
 class HopsworksSettings(BaseModel):
@@ -39,11 +36,11 @@ class HopsworksSettings(BaseModel):
     START_OFFLINE_MATERIALIZATION: bool = os.getenv("FEATURE_GROUP_START_OFFLINE_MATERIALIZATION", False)
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Topic to Feature Store Hopsworks"
+    PROJECT_NAME: str = "Price Predictor"
     PROJECT_VERSION: str = "0.0.1"
     PROJECT_DESCRIPTION: str = "Push feature from Kafka to Hopsworks"
     BASE_DIR: Path = BASE_DIR
-    kafka: KafkaSettings = KafkaSettings()
+    cometml: CometMLSettings = CometMLSettings()
     hopsworks: HopsworksSettings = HopsworksSettings()
     LOGGER_NAME: str = "price_predictor"
     SYMBOL: str = os.getenv("SYMBOL", "BTCUSDT")
