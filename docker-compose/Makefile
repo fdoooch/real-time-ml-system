@@ -13,7 +13,7 @@ stop-feature-pipeline:
 start-backfill-pipeline:
 	export BACKFILL_JOB_ID=$$(date +%s%N)-$$RANDOM && \
 	echo $$BACKFILL_JOB_ID > .backfill_job_id && \
-	docker compose -f backfill_pipeline.yml up --build -d -e BACKFILL_JOB_ID=$$BACKFILL_JOB_ID && \
+	BACKFILL_JOB_ID=$$BACKFILL_JOB_ID docker compose -f backfill_pipeline.yml up --build -d && \
 	echo "Started backfill pipeline with job id: $$BACKFILL_JOB_ID"
 
 stop-backfill-pipeline:
@@ -23,7 +23,7 @@ stop-backfill-pipeline:
 	@echo "Deleting Redpanda resources for job id: $(BACKFILL_JOB_ID)"
 	@make delete-redpanda-resources BACKFILL_JOB_ID=$(BACKFILL_JOB_ID)
 	@rm -f .backfill_job_id
-	
+
 delete-redpanda-resources:
 	rpk topic delete trade_historical_$(BACKFILL_JOB_ID) -- brokers redpanda-0:9092
 	rpk topic delete ohlcv_historical_$(BACKFILL_JOB_ID) -- brokers redpanda-0:9092
