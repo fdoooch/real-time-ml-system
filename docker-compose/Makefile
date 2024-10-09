@@ -1,3 +1,5 @@
+REDPANDA_BROKER ?= localhost:19092
+
 start-redpanda:
 	docker compose -f redpanda.yml up -d
 
@@ -32,10 +34,16 @@ stop-backfill-pipeline:
 
 delete-redpanda-resources:
 	@which rpk > /dev/null || (echo "Error: 'rpk' command not found. Please install it or add it to your PATH." && exit 1)
-	rpk topic delete trade_historical_$(BACKFILL_JOB_ID) --brokers redpanda-0:9092 || true
-	rpk topic delete ohlcv_historical_$(BACKFILL_JOB_ID) --brokers redpanda-0:9092 || true
-	rpk group delete trade_to_ohlcv_historical_$(BACKFILL_JOB_ID) --brokers redpanda-0:9092 || true
-	rpk group delete ohlcv_historical_to_feature_store_$(BACKFILL_JOB_ID) --brokers redpanda-0:9092 || true
+	@echo "Attempting to connect to Redpanda broker at $(REDPANDA_BROKER)"
+	@rpk cluster info --brokers $(REDPANDA_BROKER) > /dev/null || (echo "Failed to connect to Redpanda cluster. Please check your network configuration." && exit 1)
+	@echo "Deleting topic: trade_historical_$(BACKFILL_JOB_ID)"
+	@rpk topic delete trade_historical_$(BACKFILL_JOB_ID) --brokers $(REDPANDA_BROKER) || echo "Topic not found or already deleted."
+	@echo "Deleting topic: ohlcv_historical_$(BACKFILL_JOB_ID)"
+	@rpk topic delete ohlcv_historical_$(BACKFILL_JOB_ID) --brokers $(REDPANDA_BROKER) || echo "Topic not found or already deleted."
+	@echo "Deleting consumer group: trade_to_ohlcv_historical_$(BACKFILL_JOB_ID)"
+	@rpk group delete trade_to_ohlcv_historical_$(BACKFILL_JOB_ID) --brokers $(REDPANDA_BROKER) || echo "Consumer group not found or already deleted."
+	@echo "Deleting consumer group: ohlcv_historical_to_feature_store_$(BACKFILL_JOB_ID)"
+	@rpk group delete ohlcv_historical_to_feature_store_$(BACKFILL_JOB_ID) --brokers $(REDPANDA_BROKER) || echo "Consumer group not found or already deleted."
 
 
 logs-trades-producer-live:
