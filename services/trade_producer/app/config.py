@@ -15,6 +15,7 @@ print("JOB_ID: ", os.getenv("BACKFILL_JOB_ID"))
 
 def get_kafka_trades_topic_name() -> str:
 	env_topic = os.getenv("KAFKA_TRADES_TOPIC")
+	print(f"env_topic: {env_topic}")
 	if "historical" in env_topic:
 		return f"{env_topic}_{os.getenv('BACKFILL_JOB_ID')}"
 	return env_topic
