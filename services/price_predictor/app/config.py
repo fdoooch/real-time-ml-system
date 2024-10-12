@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     LOGGER_NAME: str = "price_predictor"
     SYMBOL: str = os.getenv("SYMBOL", "BTCUSDT")
     FORECAST_STEPS: int = int(os.getenv("FORECAST_STEPS", 5))
+    NUM_SEARCH_TRIALS: int = int(os.getenv("NUM_SEARCH_TRIALS", 10))
+    NUM_TRAINING_DATA_SPLITS: int = int(os.getenv("NUM_TRAINING_DATA_SPLITS", 3))
+    NUM_OPTIMIZATOR_JOBS: int = int(os.getenv("NUM_OPTIMIZATOR_JOBS", 1))
     PERCENTAGE_TEST_DATA: float = float(os.getenv("PERCENTAGE_TEST_DATA", 0.3))
 
 
