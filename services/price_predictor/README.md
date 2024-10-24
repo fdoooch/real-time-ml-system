@@ -25,3 +25,11 @@ sudo make install
 
 
 > poetry add TA-Lib
+
+
+
+# Работа с кубернетес
+https://paulabartabajo.substack.com/p/lets-deploy-our-rest-api-to-production
+
+
+low cost dedicated servers from Hetzner, OVH

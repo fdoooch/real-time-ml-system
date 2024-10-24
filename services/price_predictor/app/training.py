@@ -13,6 +13,7 @@ from sklearn.metrics import mean_absolute_error
 from datetime import datetime as dt
 from dataclasses import dataclass
 import pandas as pd
+import joblib
 import logging
 
 
@@ -183,8 +184,21 @@ def train_model(
     experiment.log_metric("xgb_regressor_mae_train", mae_train)
 
     # Push model to the model registry
+    model_name = f"price_predictor_{symbol}_{ohlcv_window_size_sec}_s_{forecast_steps}_steps"
+    
+    ## Save model locally
+    model_path = f"{model_name}.joblib"
+    model_path.mkdir(parents=True, exist_ok=True)
+    joblib.dump(xgb_model.get_model_object(), model_path)
+
+    experiment.log_model(
+        name=model_name,
+        
+    )
+
+
     experiment.end()
-    ...
+    
 
 
 def convert_str_to_ms(date_str: str) -> int:

@@ -6,6 +6,12 @@ start-redpanda:
 stop-redpanda:
 	docker compose -f redpanda.yml down
 
+start-clickhouse:
+	docker compose -f clickhouse.yml up -d
+
+stop-clickhouse:
+	docker compose -f clickhouse.yml down
+
 start-feature-pipeline:
 	docker compose -f feature_live_pipeline.yml up --build -d
 

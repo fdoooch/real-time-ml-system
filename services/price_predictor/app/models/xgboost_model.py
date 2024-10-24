@@ -75,3 +75,7 @@ class XGBoostModel:
 
     def predict(self, X: pd.DataFrame) -> pd.Series:
         return self._model.predict(X)
+    
+
+    def get_model_object(self) -> XGBRegressor:
+        return self._model
