@@ -32,7 +32,7 @@ services:
     networks:
       - redpanda_network
     ports:
-      - "8080:8978"
+      - "8978:8978"
     volumes:
       - dbeaver_workspace:/opt/cloudbeaver/workspace
     depends_on:
